@@ -1,0 +1,140 @@
+format 0
+
+[[]]
+not regex .*view-source:.*
+not discoveredregex .*iframe\\.?ly.*
+successful
+
+[user:sanqui]
+some exact https://cohost.org/sanqui
+some exact https://staging.cohostcdn.org/header/44212-ce22451d-922d-4dfa-8c4d-74cd8ae99b53-profile.png
+some exact https://staging.cohostcdn.org/avatar/44212-f0523470-dd28-4357-9cb9-91b51ce26a66-profile.png?dpr=2&width=80&height=80&fit=cover&auto=webp # TODO assert that images like this always have height and width asserted as 80 - as they are gotten as such for users not the current (even when downscaled client-side)
+some exact https://cohost.org/sanqui?page=0
+some exact https://cohost.org/sanqui?page=1
+
+# Unclear purpose
+some exact https://cohost.org/api/v1/trpc/users.displayPrefs,subscriptions.hasActiveSubscription,login.loggedIn,projects.followingState,posts.profilePosts,projects.isReaderMuting,projects.isReaderBlocking?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22sanqui%22%2C%22page%22%3A0%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Afalse%2C%22hideAsks%22%3Afalse%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%226%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%7D
+# TODO check if this is for any page but 0
+
+some exact https://cohost.org/api/v1/trpc/posts.profilePosts?batch=1&input=%7B%220%22%3A%7B%22projectHandle%22%3A%22sanqui%22%2C%22page%22%3A0%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Afalse%2C%22hideAsks%22%3Afalse%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
+some exact https://cohost.org/api/v1/trpc/posts.profilePosts?batch=1&input=%7B%220%22%3A%7B%22projectHandle%22%3A%22sanqui%22%2C%22page%22%3A1%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Afalse%2C%22hideAsks%22%3Afalse%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
+
+# Useless to us (possibly to check if a login has happened in another tab?), but required for playback
+some exact https://cohost.org/api/v1/trpc/login.loggedIn,users.displayPrefs,subscriptions.hasActiveSubscription,projects.isReaderMuting,projects.isReaderBlocking,projects.followingState,posts.profilePosts?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%226%22%3A%7B%22projectHandle%22%3A%22sanqui%22%2C%22page%22%3A0%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Afalse%2C%22hideAsks%22%3Afalse%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
+some exact https://cohost.org/api/v1/trpc/login.loggedIn,users.displayPrefs,subscriptions.hasActiveSubscription,projects.isReaderMuting,projects.isReaderBlocking,projects.followingState,posts.profilePosts?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%226%22%3A%7B%22projectHandle%22%3A%22sanqui%22%2C%22page%22%3A1%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Afalse%2C%22hideAsks%22%3Afalse%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
+
+# Variations of the last 3 groups, for different combinations of post visibility options
+# Can be eliminated if we are pressured
+some exact https://cohost.org/api/v1/trpc/posts.profilePosts?batch=1&input=%7B%220%22%3A%7B%22projectHandle%22%3A%22sanqui%22%2C%22page%22%3A1%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Atrue%2C%22hideAsks%22%3Atrue%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
+some exact https://cohost.org/api/v1/trpc/posts.profilePosts?batch=1&input=%7B%220%22%3A%7B%22projectHandle%22%3A%22sanqui%22%2C%22page%22%3A0%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Atrue%2C%22hideAsks%22%3Atrue%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
+some exact https://cohost.org/api/v1/trpc/users.displayPrefs,posts.profilePosts?batch=1&input=%7B%221%22%3A%7B%22projectHandle%22%3A%22sanqui%22%2C%22page%22%3A0%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Atrue%2C%22hideAsks%22%3Atrue%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
+some exact https://cohost.org/api/v1/trpc/login.loggedIn,users.displayPrefs,subscriptions.hasActiveSubscription,projects.isReaderMuting,projects.isReaderBlocking,projects.followingState,posts.profilePosts?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%226%22%3A%7B%22projectHandle%22%3A%22sanqui%22%2C%22page%22%3A0%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Atrue%2C%22hideAsks%22%3Atrue%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
+
+
+# XHR that gets requested on a post
+some exact https://cohost.org/api/v1/trpc/users.displayPrefs,subscriptions.hasActiveSubscription,login.loggedIn,projects.followingState,posts.singlePost,projects.isReaderMuting,projects.isReaderBlocking?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%224%22%3A%7B%22handle%22%3A%22sanqui%22%2C%22postId%22%3A1697007%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%226%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%7D
+some exact https://cohost.org/api/v1/trpc/login.loggedIn,users.displayPrefs,subscriptions.hasActiveSubscription,projects.isReaderMuting,projects.isReaderBlocking,projects.followingState,posts.singlePost?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%226%22%3A%7B%22handle%22%3A%22sanqui%22%2C%22postId%22%3A1697007%7D%7D
+
+# Site logos
+not exact https://cohost.org/static/7ec6f0f3aef87d734f9b.png
+not exact https://cohost.org/static/3c154cde88b7ed1ca92a.png
+
+# Post which is purely a repost of another; may eliminate these if we are pressured
+# N.b. the tags and first user discovered (the original poster) are still discernable from the main blog page
+some exact https://cohost.org/sanqui/post/7345235-empty
+some discovered tag:pok%c3%a9mon%20diamond%20but%20not%20the%20one%20from%20game%20freak
+some discovered user:telefang
+some discovered user:Maverynthia
+some discovered https://sanqui.net/etc/telefang_screenshots.png # Post was from another user (despite the domain name) but we can pipe it to #// even though that means a bit of duplication over there
+
+# Another image not posted by this user (not external domain)
+# Disabled because we are getting these now because I'm not 100% confident the repost detection won't give false positives
+# not regex ^https?://staging\.cohostcdn\.org/attachment/08dfeaa1-9a85-4679-b2f7-744d4609fd92/sanqui\.jpg.*
+
+some exact https://cohost.org/sanqui/tagged/english%20translation%20patch
+some exact https://cohost.org/sanqui/post/6020724-owl-and-a-crt
+some exact https://cohost.org/sanqui/tagged/look%20at%20me%20practicing%20POSSE
+some discovered tag:look%20at%20me%20practicing%20POSSE
+
+# Ask
+some exact https://cohost.org/sanqui/post/2210422-ovo
+
+# Image that was posted by this user
+some exact https://staging.cohostcdn.org/attachment/4a953630-0e22-401a-aecc-ef5004bdf248/onix_border_8x_wide.png?width=675&auto=webp&dpr=1
+some exact https://staging.cohostcdn.org/attachment/4a953630-0e22-401a-aecc-ef5004bdf248/onix_border_8x_wide.png?width=675&auto=webp&dpr=2
+some exact https://staging.cohostcdn.org/attachment/4a953630-0e22-401a-aecc-ef5004bdf248/onix_border_8x_wide.png?width=675&auto=webp&dpr=3
+some exact https://staging.cohostcdn.org/attachment/4a953630-0e22-401a-aecc-ef5004bdf248/onix_border_8x_wide.png
+
+# External image embedded in post
+some exact https://sanqui.net/etc/ocean-journey-3d.jpg
+
+# External URL
+some discovered https://www.digimindsoft.com/Ocean-Journey-3D-Screensaver-57.html
+# And in profile
+some discovered https://sanqui.net/
+
+# User only mentioned with "@" in profile
+some discovered user:tcrf
+
+# Subdomain
+some exact https://sanqui.cohost.org/
+some exact https://sanqui.cohost.org/?page=0
+some exact https://sanqui.cohost.org/?page=1
+# some exact https://sanqui.cohost.org/?page=1&hideReplies=true&hideAsks=true Disabled because there are *none* of these, subdomain or not, in cdx
+some exact https://sanqui.cohost.org/static/client.9de493d3ba74abc6eacb.css
+some regex ^https://sanqui\.cohost\.org/static/runtime\.[a-f0-9]+\.js$
+some regex ^https://sanqui\.cohost\.org/static/client\.[a-f0-9]+\.js$
+some exact https://sanqui.cohost.org/static/8196.9488211cfaad004027c2.js
+some exact https://sanqui.cohost.org/static/client-preact-components-pages-project-page-view.63cef228fcf81849ae53.js
+some exact https://sanqui.cohost.org/static/7c05f33b4fe5f8132439.woff2
+some exact https://sanqui.cohost.org/static/b07ad0e0d01ba4d56c1a.woff2
+some exact https://sanqui.cohost.org/static/1d032f03e8c1619c1840.woff
+some exact https://sanqui.cohost.org/static/4860.328a8b56d19750b075f1.js
+some exact https://sanqui.cohost.org/static/160a2de1e18bbfbce0d6.woff2
+# TODO not suer if I got all of these
+
+# And why not
+some exact https://cohost.org/sanqui/rss/public.json
+some exact https://cohost.org/sanqui/rss/public.atom
+
+# User with no posts
+[user:digitaldragons]
+some exact https://cohost.org/digitaldragons
+some exact https://digitaldragons.cohost.org/
+some exact https://cohost.org/digitaldragons?page=0
+some exact https://digitaldragons.cohost.org/?page=0
+not exact https://cohost.org/digitaldragons?page=1 # Especially as these go on forever
+some exact https://cohost.org/api/v1/trpc/login.loggedIn,users.displayPrefs,subscriptions.hasActiveSubscription,projects.isReaderMuting,projects.isReaderBlocking,projects.followingState,posts.profilePosts?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22digitaldragons%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22digitaldragons%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22digitaldragons%22%7D%2C%226%22%3A%7B%22projectHandle%22%3A%22digitaldragons%22%2C%22page%22%3A0%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Afalse%2C%22hideAsks%22%3Afalse%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
+
+# User with embeds
+[user:sixlegendsgame]
+some exact https://iframely.net/api/thumbnail?url=https%3A%2F%2Fyoutu.be%2FL0AGUYXU0ag&key=db0b365a626eb72ce8c169cd30f99ac2&maxwidth=960 # Shows when you allow the Youtube URL, but before playing
+some discovered https://youtu.be/L0AGUYXU0ag
+# Not going to get the actual Youtube content - if we want to do that, #// can handle it
+# Second embed (same post:)
+some exact https://iframely.net/api/thumbnail?url=https%3A%2F%2Fstore.steampowered.com%2Fapp%2F2768130%2F&key=db0b365a626eb72ce8c169cd30f99ac2&maxwidth=960
+some discovered https://store.steampowered.com/app/2768130/
+some exact https://cdn.iframe.ly/api/iframely?url=https%3a%2f%2fstore%2esteampowered%2ecom%2fapp%2f2768130%2f&key=db0b365a626eb72ce8c169cd30f99ac2&iframe=1&omit_script=1 # This is escaped as the script does it rather than the browser
+some exact https://iframely.net/api/iframe?app=1&url=https%3A%2F%2Fstore.steampowered.com%2Fapp%2F2768130%2F&key=db0b365a626eb72ce8c169cd30f99ac2
+# Half-height images
+some exact https://staging.cohostcdn.org/attachment/ed35dcd5-1dca-4f58-b5a5-19e790149329/davinci.png?width=337&height=197&fit=crop&auto=webp&dpr=1
+some exact https://staging.cohostcdn.org/attachment/2083ef06-b9ba-422f-80cf-2639cfeed009/Steam.jpg?width=337&height=197&fit=crop&auto=webp&dpr=1
+some exact https://staging.cohostcdn.org/attachment/76d8ccfb-d793-4a8a-a934-954a25bd99f9/Final%20Cutscene%20Climax.png?width=337&height=245&fit=crop&auto=webp&dpr=1
+# And a full image, just to make sure
+some exact https://staging.cohostcdn.org/attachment/1f240eb2-370c-4b26-a056-f10dff54cc72/dragondancelunarnewyear.png
+
+# Invalid user
+[user:digitaldragon444]
+some exact https://cohost.org/digitaldragon444
+maxrequests 3
+
+# User with noncanonical capitalization
+[user:sanquI]
+maxrequests 400
+
+
+[tag:video%20game%20preservation]
+some exact https://cohost.org/rc/tagged/video%20game%20preservation
+some regex ^https?://cohost\\.org/rc/tagged/video%20game%20preservation\\?refTimestamp=17\\d+&skipPosts=40
+some discovered user:kaceydotme
+some discovered user:witchpixels
