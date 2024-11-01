@@ -645,6 +645,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
           
           check_user_metadata(loader_state["project-page-view"]["project"])
           check("https://cohost.org/api/v1/trpc/users.displayPrefs,subscriptions.hasActiveSubscription,login.loggedIn,projects.followingState,projects.isReaderMuting,projects.isReaderBlocking?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%7D")
+          check("https://cohost.org/api/v1/trpc/users.displayPrefs,projects.followingState,projects.isReaderMuting,projects.isReaderBlocking?batch=1&input=%7B%221%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%2C%222%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%2C%223%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%7D")
         end
       end
     end
