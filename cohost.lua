@@ -873,8 +873,8 @@ end
 
 wget.callbacks.finish = function(start_time, end_time, wall_time, numurls, total_downloaded_bytes, total_download_time)
   end_of_item()
-  queue_list_to(discovered_items, "BF KEY HERE")
-  queue_list_to(discovered_urls, "URLS KEY HERE")
+  queue_list_to(discovered_items, "cohost-wewri2htv6akk1ij")
+  queue_list_to(discovered_urls, "urls-eucpu0yrat3fsajp")
 end
 
 wget.callbacks.write_to_warc = function(url, http_stat)
