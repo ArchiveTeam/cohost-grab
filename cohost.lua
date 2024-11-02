@@ -619,7 +619,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     end
   
     -- As these are outlinks, do not set `force`, which mean they go to #//
-    if user_info["url"] then
+    if user_info["url"] and user_info["url"]:match("[^%s]") then
       check(user_info["url"])
     end
     for _, cc in pairs(user_info["contactCard"]) do
