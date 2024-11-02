@@ -418,7 +418,9 @@ local function process_post(post, username, check, insane_url_extract)
     local function traverse(node, only_child)
       if node["tagName"] == "a" then
         local href = node["properties"]["href"]
-        discover_url(href)
+        if href then
+          discover_url(href)
+        end
         if node["children"] and #node["children"] == 1 and node["children"][1]["type"] == "text"
           and node["position"] and node["children"][1]["position"] and node["children"][1]["position"]["start"]["offset"] == node["position"]["start"]["offset"]
           and only_child then
