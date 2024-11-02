@@ -97,6 +97,9 @@ some exact https://sanqui.cohost.org/static/160a2de1e18bbfbce0d6.woff2
 some exact https://cohost.org/sanqui/rss/public.json
 some exact https://cohost.org/sanqui/rss/public.atom
 
+# Original image
+some exact https://staging.cohostcdn.org/attachment/4a953630-0e22-401a-aecc-ef5004bdf248/onix_border_8x_wide.png
+
 # User with no posts
 [user:digitaldragons]
 some exact https://cohost.org/digitaldragons
