@@ -782,10 +782,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
     and not (url["url"]:match("^https?://cdn%.iframe%.ly/") and JSON:decode(read_file(http_stat["local_file"]))["error"]:match("Iframely could not fetch the given URL")) then
     print("Server returned " .. http_stat.statcode .. " (" .. err .. "). Sleeping.\n")
     do_retry = true
-  end
-
-  -- Check for rate limiting in the API (status code == 200)
-  if string.match(url["url"], "^https?://cohost%.org/api/") then
+  elseif string.match(url["url"], "^https?://cohost%.org/api/") then
       local json = JSON:decode(read_file(http_stat["local_file"]))
       if json["error"] then
         print("JSON error. Sleeping.\n")
@@ -879,7 +876,12 @@ end
 
 wget.callbacks.write_to_warc = function(url, http_stat)
   set_new_item(url["url"])
-  if string.match(url["url"], "^https?://cohost%.org/api/") then
+  print_debug("SC is", http_stat["statcode"])
+  if (string.match(url["url"], "^https?://cohost%.org/") or string.match(url["url"], "^https?://[^%.]+%.cohost%.org/") or string.match(url["url"], "^https?://[^%.]+%.cohostcdn%.org/"))
+          and http_stat["statcode"] ~= 200 and http_stat["statcode"] ~= 404 then
+    print_debug("Not WTW")
+    return false
+  elseif string.match(url["url"], "^https?://cohost%.org/api/") then
     local json = JSON:decode(read_file(http_stat["local_file"]))
     if not json then
       error("Failed to parse as JSON the response from " .. url["url"] .. " : " .. read_file(http_stat["local_file"]))
@@ -888,10 +890,6 @@ wget.callbacks.write_to_warc = function(url, http_stat)
       print_debug("Not WTW")
       return false
     end
-  elseif (string.match(url["url"], "^https?://cohost%.org/") or string.match(url["url"], "^https?://[^%.]+%.cohost%.org/") or string.match(url["url"], "^https?://[^%.]+%.cohostcdn%.org/"))
-          and http_stat["statcode"] ~= 200 and http_stat["statcode"] ~= 404 then
-    print_debug("Not WTW")
-    return false
   end
   return true
 end
