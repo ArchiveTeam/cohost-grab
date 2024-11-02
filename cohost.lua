@@ -293,6 +293,8 @@ local function check_post_attachments(post, check)
       print_debug("Processing at " .. JSON:encode(at))
       if at["kind"] == "image" then
         check_srcWithDpr(at["fileURL"], maxWidth, aspect_ratio)
+        check(at["fileURL"])
+        check(at["previewURL"])
         if at["previewURL"] ~= at["fileURL"] then
           assert(at["fileURL"]:match("%.gif$"))
           check_srcWithDpr(at["previewURL"], maxWidth, aspect_ratio)
@@ -876,7 +878,6 @@ end
 
 wget.callbacks.write_to_warc = function(url, http_stat)
   set_new_item(url["url"])
-  print_debug("SC is", http_stat["statcode"])
   if (string.match(url["url"], "^https?://cohost%.org/") or string.match(url["url"], "^https?://[^%.]+%.cohost%.org/") or string.match(url["url"], "^https?://[^%.]+%.cohostcdn%.org/"))
           and http_stat["statcode"] ~= 200 and http_stat["statcode"] ~= 404 then
     print_debug("Not WTW")
