@@ -130,6 +130,7 @@ maxrequests 3
 
 # User with noncanonical capitalization
 [user:sanquI]
+some discovered user:sanqui
 maxrequests 400
 
 
