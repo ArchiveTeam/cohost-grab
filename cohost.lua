@@ -783,7 +783,9 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
   if status_code ~= 200
     and not (url["url"]:match("^https?://cohost%.org/[^/%?]+$") and status_code == 404)
     and not (not url_is_essential and status_code == 404)
-    and not (url["url"]:match("^https?://cdn%.iframe%.ly/") and JSON:decode(read_file(http_stat["local_file"]))["error"]:match("Iframely could not fetch the given URL")) then
+    and not (url["url"]:match("^https?://cdn%.iframe%.ly/") and JSON:decode(read_file(http_stat["local_file"]))["error"]:match("Iframely could not fetch the given URL")) 
+    and not (status_code == 404 and url["url"]:match("^https://" ..USERNAME_RE .. "%.cohost%.org/")) -- Spurious extractions by DCP of relative links on subdomains. Outside subdomains these are backfed as spurious users so this only happens here. Seeing how peripheral subdomains are, I don't think this will ever indicate a problem worth our notice.
+    then
     print("Server returned " .. http_stat.statcode .. " (" .. err .. "). Sleeping.\n")
     do_retry = true
   elseif string.match(url["url"], "^https?://cohost%.org/api/") then
