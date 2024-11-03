@@ -748,7 +748,10 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
 
 
   -- Handle redirects not in download chains
-  if status_code >= 300 and status_code <= 399 and (url["url"]:match("^https://iframely%.net/api/thumbnail") or (redirects_level > 0 and redirects_level < 5)) then
+  if status_code >= 300 and status_code <= 399 and (
+      (url["url"]:match("^https://iframely%.net/api/thumbnail") or url["url"]:match("^https?://cohost%.org/api/v1/attachments/") or url["url"]:match("^https://cohost%.org/rc/attachment%-redirect/"))
+      or (redirects_level > 0 and redirects_level < 5)
+    ) then
     redirects_level = redirects_level + 1
     local newloc = urlparse.absolute(url["url"], http_stat["newloc"])
     print_debug("newloc is " .. newloc)
@@ -767,6 +770,10 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
     end
   end
   redirects_level = 0
+  
+  if url["url"]:match("^https?://cohost%.org/api/v1/attachments/") or url["url"]:match("^https://cohost%.org/rc/attachment%-redirect/") then
+    error("URL should have had a redirect on it")
+  end
   
   
   do_retry = false
@@ -788,7 +795,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
     then
     print("Server returned " .. http_stat.statcode .. " (" .. err .. "). Sleeping.\n")
     do_retry = true
-  elseif string.match(url["url"], "^https?://cohost%.org/api/") then
+  elseif string.match(url["url"], "^https?://cohost%.org/api/") and not string.match(url["url"], "^https?://cohost%.org/api/v1/attachments/") then
       local json = JSON:decode(read_file(http_stat["local_file"]))
       if json["error"] then
         print("JSON error. Sleeping.\n")
@@ -883,10 +890,14 @@ end
 wget.callbacks.write_to_warc = function(url, http_stat)
   set_new_item(url["url"])
   if (string.match(url["url"], "^https?://cohost%.org/") or string.match(url["url"], "^https?://[^%.]+%.cohost%.org/") or string.match(url["url"], "^https?://[^%.]+%.cohostcdn%.org/"))
-          and http_stat["statcode"] ~= 200 and http_stat["statcode"] ~= 404 then
+          and http_stat["statcode"] ~= 200 and http_stat["statcode"] ~= 404
+          and not (
+            (http_stat["statcode"] == 301 or http_stat["statcode"] == 302) and
+            (string.match(url["url"], "^https?://cohost%.org/api/v1/attachments/") or "^https://cohost%.org/rc/attachment%-redirect/")
+          ) then
     print_debug("Not WTW")
     return false
-  elseif string.match(url["url"], "^https?://cohost%.org/api/") then
+  elseif string.match(url["url"], "^https?://cohost%.org/api/") and not string.match(url["url"], "^https?://cohost%.org/api/v1/attachments/") then
     local json = JSON:decode(read_file(http_stat["local_file"]))
     if not json then
       error("Failed to parse as JSON the response from " .. url["url"] .. " : " .. read_file(http_stat["local_file"]))
