@@ -19,6 +19,7 @@ import string
 import json
 import requests
 from base64 import b64encode
+import re
 
 import seesaw
 from seesaw.externalprocess import WgetDownload
@@ -57,7 +58,7 @@ if not WGET_AT:
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = '20241103.01'
+VERSION = '20241104.01'
 USER_AGENT = 'Archiveteam (https://wiki.archiveteam.org/; communicate at https://webirc.hackint.org/#ircs://irc.hackint.org/#archiveteam)'
 TRACKER_ID = 'cohost'
 TRACKER_HOST = 'legacy-api.arpa.li'
@@ -237,6 +238,9 @@ class WgetArgs(object):
             wget_args.append('item-name://' + item_name)
             item_type, item_value = item_name.split(':', 1)
             if item_type == 'user':
+                if not re.match(r"^[0-9a-zA-Z\-]+$", item_value):
+                    print("Skipping invalid item", item_value)
+                    continue
                 wget_args.extend(['--warc-header', 'cohost-user: ' + item_value])
                 wget_args.append(f'https://cohost.org/{item_value}')
                 set_start_url(item_type, item_value, f'https://cohost.org/{item_value}')
