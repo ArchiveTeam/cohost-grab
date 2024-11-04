@@ -708,7 +708,9 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     if username_base and postid_base then
       username_post_type = username_base
       postid_post_type = postid_base
-      check('https://cohost.org/api/v1/trpc/posts.singlePost?batch=1&input={"0":{"handle":"' .. username_base .. '","postId":' .. postid_base .. '}}')
+      if status_code ~= 404 then
+        check('https://cohost.org/api/v1/trpc/posts.singlePost?batch=1&input={"0":{"handle":"' .. username_base .. '","postId":' .. postid_base .. '}}')
+      end
     elseif url:match("^https://cohost%.org/api/v1/trpc/posts%.singlePost%?batch") then
       local json = JSON:decode(load_html())
       process_post(json[1]["result"]["data"]["post"], username_post_type, check, insane_url_extract)
@@ -793,7 +795,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
   end
 
   -- Whitelist instead of blacklist status codes
-  if status_code ~= 200
+  if status_code ~= 200 and status_code ~= 404
     and not (url["url"]:match("^https?://cohost%.org/[^/%?]+$") and status_code == 404)
     and not (not url_is_essential and status_code == 404)
     and not (url["url"]:match("^https?://cdn%.iframe%.ly/") and JSON:decode(read_file(http_stat["local_file"]))["error"]:match("Iframely could not fetch the given URL")) 

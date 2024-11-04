@@ -136,6 +136,14 @@ maxrequests 3
 some discovered user:sanqui
 maxrequests 400
 
+# Post with redirecting media URL in some meta tag
+[post:tangledmacrame/post/1307301-empty]
+some exact https://cohost.org/api/v1/attachments/92f06b0e-faee-429c-8cf7-f5cc3e2d79e6
+some exact https://staging.cohostcdn.org/attachment/92f06b0e-faee-429c-8cf7-f5cc3e2d79e6/BenBois-Vinyl-records.svg
+
+# Post that 404s even though it's listed on a tag page
+[post:LeminWedj/post/4049956-no-discrimination]
+some exact https://cohost.org/LeminWedj/post/4049956-no-discrimination
 
 [tag:video%20game%20preservation]
 some exact https://cohost.org/rc/tagged/video%20game%20preservation
