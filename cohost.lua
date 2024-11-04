@@ -282,10 +282,16 @@ local function check_post_attachments(post, check)
     local aspect_ratio = nil
     if atts:length() > 1 then
       local function size(att)
-        return att["width"] * att["height"]
+        return (att["width"] or 0) * (att["height"] or 0)
       end
       local largest_att = atts:max_by(function(a, b) if size(a) > size(b) then return a else return b end end)
-      local aspect_ratio = largest_att["width"] / largest_att["height"]
+      if largest_att["kind"] == "image" then
+        assert(size(largest_att) > 0)
+        aspect_ratio = largest_att["width"] / largest_att["height"]
+      else
+        assert(size(largest_att) == 0)
+        aspect_ratio = 16/9;
+      end
     end
     local maxWidth = 675 / atts:length()
     -- :chain() is a hack to turn it back into a (gen, param, state) iterator
