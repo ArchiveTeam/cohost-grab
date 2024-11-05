@@ -65,7 +65,8 @@ end_of_item = function()
 end
 
 set_new_item = function(url)
-  if url == start_urls[next_start_url_index] then
+  -- If next exists, and it matches the current
+  if start_urls[next_start_url_index] and (urlparse.unescape(url) == urlparse.unescape(start_urls[next_start_url_index])) then
     end_of_item()
     current_item_type = items_table[next_start_url_index][1]
     current_item_value = items_table[next_start_url_index][2]

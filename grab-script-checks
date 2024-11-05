@@ -150,3 +150,7 @@ some exact https://cohost.org/rc/tagged/video%20game%20preservation
 some regex ^https?://cohost\\.org/rc/tagged/video%20game%20preservation\\?refTimestamp=17\\d+&skipPosts=40
 some discovered user:kaceydotme
 some discovered user:witchpixels
+
+# Single quote and explamation mark get pre-urldecoded by wget
+[tag:We%27ll%20see%20if%20that%20helps%21%21]
+some regex ^https?://cohost.org/.*
