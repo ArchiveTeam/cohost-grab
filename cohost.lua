@@ -817,6 +817,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
     and not (url["url"]:match("^https?://cdn%.iframe%.ly/") and JSON:decode(read_file(http_stat["local_file"]))["error"]:match("Iframely could not fetch the given URL")) 
     and not (status_code == 404 and url["url"]:match("^https://" ..USERNAME_RE .. "%.cohost%.org/")) -- Spurious extractions by DCP of relative links on subdomains. Outside subdomains these are backfed as spurious users so this only happens here. Seeing how peripheral subdomains are, I don't think this will ever indicate a problem worth our notice.
     and not (status_code == 403 and user_not_publicly_viewable)
+    and not (status_code == 207 and url["url"]:match("posts%.singlePost"))
     then
     print("Server returned " .. http_stat.statcode .. " (" .. err .. "). Sleeping.\n")
     do_retry = true
@@ -921,6 +922,7 @@ wget.callbacks.write_to_warc = function(url, http_stat)
             (string.match(url["url"], "^https?://cohost%.org/api/v1/attachments/") or "^https://cohost%.org/rc/attachment%-redirect/")
           )
           and not (http_stat["statcode"] == 403 and user_not_publicly_viewable)
+          and not (http_stat["statcode"] == 207 and url["url"]:match("posts%.singlePost"))
           then
     print_debug("Not WTW")
     return false
