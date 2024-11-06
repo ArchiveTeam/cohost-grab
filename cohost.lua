@@ -33,6 +33,7 @@ local username_post_type = nil
 local postid_post_type = nil
 local pure_repost_posts = {}
 local cut_user_short = false
+local user_not_publicly_viewable = false
 
 local iframely_key = "db0b365a626eb72ce8c169cd30f99ac2"
 local USERNAME_RE = "[a-zA-Z0-9%-]+"
@@ -76,6 +77,7 @@ set_new_item = function(url)
     mystery_scripts = {}
     pure_repost_posts = {}
     cut_user_short = false
+    user_not_publicly_viewable = false
   end
   assert(current_item_type)
   assert(current_item_value)
@@ -161,6 +163,11 @@ allowed = function(url, parenturl, forced)
       return false
     end
     tested[s] = tested[s] + 1
+  end
+  
+  if url == "https://cohost.org/sanqui/tagged/&" then
+    -- Started timing out for no reason, causing tests to fail
+    return false
   end
   
   if current_item_type == "tag" then
@@ -649,14 +656,22 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
           discover_item("user", capitalized_handle)
           cut_user_short = true
         else
-          check_profile_posts_listing(current_item_value, 0)
           -- https://help.antisoftware.club/support/solutions/articles/62000226634-how-do-i-change-my-username-page-name-or-handle-
           assert(current_item_value:match("^" .. USERNAME_RE .. "$"))
           check("https://" .. current_item_value:lower() .. ".cohost.org/")
           
           check_user_metadata(loader_state["project-page-view"]["project"])
-          check("https://cohost.org/api/v1/trpc/users.displayPrefs,subscriptions.hasActiveSubscription,login.loggedIn,projects.followingState,projects.isReaderMuting,projects.isReaderBlocking?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%7D")
-          check("https://cohost.org/api/v1/trpc/users.displayPrefs,projects.followingState,projects.isReaderMuting,projects.isReaderBlocking?batch=1&input=%7B%221%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%2C%222%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%2C%223%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%7D")
+          
+          if load_html():match('<h1 class="text%-xl font%-bold">this page is not viewable by logged%-out users</h1>')
+            or load_html():match('<h1 class="text%-xl font%-bold">this page is private</h1>') then
+            print_debug("User not publicly viewable")
+            user_not_publicly_viewable = true
+          else
+            print_debug("User is publicly viewable")
+            check_profile_posts_listing(current_item_value, 0)
+            check("https://cohost.org/api/v1/trpc/users.displayPrefs,subscriptions.hasActiveSubscription,login.loggedIn,projects.followingState,projects.isReaderMuting,projects.isReaderBlocking?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%7D")
+            check("https://cohost.org/api/v1/trpc/users.displayPrefs,projects.followingState,projects.isReaderMuting,projects.isReaderBlocking?batch=1&input=%7B%221%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%2C%222%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%2C%223%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%7D")
+          end
         end
       end
     end
@@ -801,6 +816,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
     and not (not url_is_essential and status_code == 404)
     and not (url["url"]:match("^https?://cdn%.iframe%.ly/") and JSON:decode(read_file(http_stat["local_file"]))["error"]:match("Iframely could not fetch the given URL")) 
     and not (status_code == 404 and url["url"]:match("^https://" ..USERNAME_RE .. "%.cohost%.org/")) -- Spurious extractions by DCP of relative links on subdomains. Outside subdomains these are backfed as spurious users so this only happens here. Seeing how peripheral subdomains are, I don't think this will ever indicate a problem worth our notice.
+    and not (status_code == 403 and user_not_publicly_viewable)
     then
     print("Server returned " .. http_stat.statcode .. " (" .. err .. "). Sleeping.\n")
     do_retry = true
@@ -903,7 +919,9 @@ wget.callbacks.write_to_warc = function(url, http_stat)
           and not (
             (http_stat["statcode"] == 301 or http_stat["statcode"] == 302) and
             (string.match(url["url"], "^https?://cohost%.org/api/v1/attachments/") or "^https://cohost%.org/rc/attachment%-redirect/")
-          ) then
+          )
+          and not (http_stat["statcode"] == 403 and user_not_publicly_viewable)
+          then
     print_debug("Not WTW")
     return false
   elseif string.match(url["url"], "^https?://cohost%.org/api/") and not string.match(url["url"], "^https?://cohost%.org/api/v1/attachments/") then

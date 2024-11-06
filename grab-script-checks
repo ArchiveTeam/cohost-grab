@@ -145,6 +145,10 @@ some exact https://staging.cohostcdn.org/attachment/92f06b0e-faee-429c-8cf7-f5cc
 [post:LeminWedj/post/4049956-no-discrimination]
 some exact https://cohost.org/LeminWedj/post/4049956-no-discrimination
 
+# Account content hidden to logged-out users
+[user:lazuliterecursion]
+some exact https://cohost.org/lazuliterecursion/rss/public.json
+
 [tag:video%20game%20preservation]
 some exact https://cohost.org/rc/tagged/video%20game%20preservation
 some regex ^https?://cohost\\.org/rc/tagged/video%20game%20preservation\\?refTimestamp=17\\d+&skipPosts=40
