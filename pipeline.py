@@ -238,16 +238,29 @@ class WgetArgs(object):
             wget_args.append('item-name://' + item_name)
             item_type, item_value = item_name.split(':', 1)
             if item_type == 'user':
-                if not re.match(r"^[0-9a-zA-Z\-]+$", item_value):
+                if not re.match(r"^[0-9a-zA-Z\-]+(\+\d+)?$", item_value):
                     print("Skipping invalid item", item_value)
                     continue
-                wget_args.extend(['--warc-header', 'cohost-user: ' + item_value])
-                wget_args.append(f'https://cohost.org/{item_value}')
-                set_start_url(item_type, item_value, f'https://cohost.org/{item_value}')
+                if m := re.match(r"^([0-9a-zA-Z\-]+)\+(\d+)$", item_value):
+                    wget_args.extend(['--warc-header', 'cohost-user: ' + item_value])
+                    url = f'https://cohost.org/{m.group(1)}?page={m.group(2)}'
+                    wget_args.append(url)
+                    set_start_url(item_type, item_value, url)
+                else:
+                    wget_args.extend(['--warc-header', 'cohost-user: ' + item_value])
+                    wget_args.append(f'https://cohost.org/{item_value}')
+                    set_start_url(item_type, item_value, f'https://cohost.org/{item_value}')
             elif item_type == "tag":
                 wget_args.extend(['--warc-header', 'cohost-tag: ' + item_value])
                 wget_args.append(f'https://cohost.org/rc/tagged/{item_value}')
                 set_start_url(item_type, item_value, f'https://cohost.org/rc/tagged/{item_value}')
+            elif item_type == "tagext":
+                start_offset, timestamp, tag_name = item_value.split("/", 2)
+                url = f"https://cohost.org/rc/tagged/{tag_name}?refTimestamp={timestamp}&skipPosts={start_offset}"
+                wget_args.extend(['--warc-header', 'cohost-tag: ' + item_value])
+                wget_args.append(url)
+                
+                set_start_url(item_type, item_value, url)
             elif item_type == "post":
                 # This item type is only used for testing; does not get everything to play back a post but causes a substantial portion of the logic to run
                 wget_args.extend(['--warc-header', 'cohost-post: ' + item_value])

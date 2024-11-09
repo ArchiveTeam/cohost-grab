@@ -35,6 +35,13 @@ local pure_repost_posts = {}
 local cut_user_short = false
 local user_not_publicly_viewable = false
 
+local tag_or_tagext_tag_content = nil
+local tag_or_tagext_timestamp = nil
+local tag_or_tagext_start_offset = nil -- Inclusive
+local tag_or_tagext_end_offset = nil -- Exclusive
+local tag_or_tagext_do_saturate = nil
+
+
 local iframely_key = "db0b365a626eb72ce8c169cd30f99ac2"
 local USERNAME_RE = "[a-zA-Z0-9%-]+"
 
@@ -78,6 +85,19 @@ set_new_item = function(url)
     pure_repost_posts = {}
     cut_user_short = false
     user_not_publicly_viewable = false
+    
+    if current_item_type == "tag" then
+      tag_or_tagext_tag_content = current_item_value
+      tag_or_tagext_timestamp = nil
+      tag_or_tagext_start_offset = 0
+      tag_or_tagext_end_offset = 50
+      tag_or_tagext_do_saturate = false
+    elseif current_item_type == "tagext" then
+      tag_or_tagext_start_offset, tag_or_tagext_timestamp, tag_or_tagext_tag_content = current_item_value:match("^([0-9]+)/([0-9]+)/(.+)$")
+      tag_or_tagext_start_offset = tonumber(tag_or_tagext_start_offset)
+      tag_or_tagext_end_offset = tag_or_tagext_start_offset + 50
+      tag_or_tagext_do_saturate = false
+    end
   end
   assert(current_item_type)
   assert(current_item_value)
@@ -170,9 +190,30 @@ allowed = function(url, parenturl, forced)
     return false
   end
   
-  if current_item_type == "tag" then
-    local tag_re = "^https?://cohost%.org/rc/tagged/([^%?#]+)"
-    return parenturl:match(tag_re) == url:match(tag_re)
+  if current_item_type == "tag" or current_item_type == "tagext" then
+    local full_tag_re = "^https://cohost%.org/rc/tagged/(.+)%?refTimestamp=([0-9]+)&skipPosts=([0-9]+)"
+    local pr_tag, pr_timestamp, pr_offset = url:match(full_tag_re)
+    if not pr_timestamp then -- Only happens when getting a link back to offset=0, which then becomes implicit/gets removed - if it's our tag we already have it, if it's another don't care
+      return false
+    elseif pr_tag ~= tag_or_tagext_tag_content then
+      return false
+    end
+    
+    tag_or_tagext_timestamp = pr_timestamp
+    
+    if current_item_type == "tagext" then
+      assert(current_item_value:match(".*" .. pr_timestamp .. ".*"))
+    end
+    
+    if tonumber(pr_offset) >= tag_or_tagext_end_offset then
+      discover_item("tagext", tag_or_tagext_end_offset .. "/" .. pr_timestamp .. "/" .. pr_tag)
+      tag_or_tagext_do_saturate = true
+    elseif tonumber(pr_offset) < tag_or_tagext_start_offset then
+      return false -- Its item had to run in order for this one to be discovered
+    else
+      return true
+    end
+    
   end
   
   if cut_user_short then
@@ -713,9 +754,16 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     if url:match("^https?://cohost%.org/") and not url:match("^https?://cohost%.org/api/") and not url:match("^https?://cohost%.org/rc/") and not url:match("^https?://cohost%.org/" .. USERNAME_RE .. "/rss/") and not status_code == 404 then
       assert(load_html():match("IFRAMELY_KEY%\":\"" .. iframely_key .. "\""))
     end
-  elseif current_item_type == "tag" then
+  elseif current_item_type == "tag" or current_item_type == "tagext" then
     for username in load_html():gmatch('{"handle":"(' .. USERNAME_RE .. ')"') do
       discover_item("user", username)
+    end
+    if tag_or_tagext_do_saturate then
+      print_debug("Carrying out saturation...")
+      -- In big tags, due to deletions(?), offsets are often not multiples of 20; and in a way I haven't bothered to completely figure out this causes all offsets in range to be linked to, usually
+      for i = tag_or_tagext_start_offset,(tag_or_tagext_end_offset - 1) do
+        check("https://cohost.org/rc/tagged/" .. tag_or_tagext_tag_content .. "?refTimestamp=" .. tag_or_tagext_timestamp .. "&skipPosts=" .. tostring(i), true)
+      end
     end
   elseif current_item_type == "post" then
     assert(do_debug)
