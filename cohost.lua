@@ -25,6 +25,7 @@ local current_item_type = nil
 local current_item_value = nil
 local next_start_url_index = 1
 local mystery_scripts = {}
+local current_user = nil
 
 local current_item_value_proper_capitalization = nil
 local do_retry = false -- read by get_urls
@@ -97,6 +98,8 @@ set_new_item = function(url)
       tag_or_tagext_start_offset = tonumber(tag_or_tagext_start_offset)
       tag_or_tagext_end_offset = tag_or_tagext_start_offset + 50
       tag_or_tagext_do_saturate = false
+    elseif current_item_type == "user" then
+      current_user = current_item_value:match("^([^%+]+)")
     end
   end
   assert(current_item_type)
@@ -168,6 +171,7 @@ read_file = function(file)
 end
 
 allowed = function(url, parenturl, forced)
+  print_debug("Allowed on " .. url)
   assert(parenturl ~= nil)
 
   if start_urls_inverted[url] then
@@ -191,14 +195,14 @@ allowed = function(url, parenturl, forced)
   end
   
   if current_item_type == "tag" or current_item_type == "tagext" then
-    local full_tag_re = "^https://cohost%.org/rc/tagged/(.+)%?refTimestamp=([0-9]+)&skipPosts=([0-9]+)"
-    local pr_tag, pr_timestamp, pr_offset = url:match(full_tag_re)
+    local pr_tag, pr_timestamp, pr_offset = url:match("^https://cohost%.org/rc/tagged/(.+)%?refTimestamp=([0-9]+)&skipPosts=([0-9]+)")
     if not pr_timestamp then -- Only happens when getting a link back to offset=0, which then becomes implicit/gets removed - if it's our tag we already have it, if it's another don't care
       return false
     elseif pr_tag ~= tag_or_tagext_tag_content then
       return false
     end
     
+    assert((not tag_or_tagext_timestamp) or tag_or_tagext_timestamp == pr_timestamp)
     tag_or_tagext_timestamp = pr_timestamp
     
     if current_item_type == "tagext" then
@@ -238,6 +242,15 @@ allowed = function(url, parenturl, forced)
     return false
   end
   
+  if current_item_type == "usertag" then
+    local user, tag = string.match(url, "^https://cohost%.org/(" .. USERNAME_RE .. ")/tagged/([^%?/%#]+)")
+    if not user then
+      return false
+    end
+    return user .. "/" .. tag == current_item_value
+  end
+
+  
 
   if string.match(url, "^https?://[^/%.]+%.cohostcdn%.org/") 
   or string.match(url, "^https?://cohost.org/api/")
@@ -254,10 +267,29 @@ allowed = function(url, parenturl, forced)
     return false -- We still get /static on custom subdomains
   end
   
+  
   local user = string.match(url, "^https?://cohost.org/([^/%?]+)") or string.match(url, "^https?://([^/%.]+)%.cohost.org/?")
   if user then
-    if user:lower() == current_item_value:lower() then
-      return true
+    if current_item_type == "user" and user:lower() == current_user:lower() then
+      print_debug("Is current user")
+      local tag = string.match(url, "^https://cohost%.org/" .. USERNAME_RE .. "/tagged/([^%?/%#]+)")
+      if tag then
+        discover_item("usertag", current_user .. "/" .. tag)
+        return false
+      end
+      if string.match(url, "^https?://" .. USERNAME_RE .. "%.cohost%.org/static/") then
+        -- Only need to get these once
+        print_debug("Considering static")
+        return not current_item_value:match("%+")
+      end
+      local page = string.match(url, "^https?://cohost.org/[^/%?]+/?%?page=([0-9]+)$") or string.match(url, "^https?://[^/%.]+%.cohost.org/?%?page=([0-9]+)$")
+        or ((string.match(url, "^https?://cohost.org/([^/%?]+)$") or string.match(url, "^https?://([^/%.]+)%.cohost.org/?$")) and "0")
+      if page then
+        local target_page = current_item_value:match("%+([0-9]+)$") or "0"
+        return page == target_page
+      else
+        return true
+      end
     else
       discover_item("user", user)
       return false
@@ -437,7 +469,7 @@ local function process_post(post, username, check, insane_url_extract)
   
 
   for _, tag in pairs(post["tags"]) do
-    check("https://cohost.org/" .. username .. "/tagged/" .. urlparse.escape(tag))
+    discover_item("usertag", username .. "/" .. urlparse.escape(tag))
     -- Seemingly case is normalized site-wide before being sent in these responses, so do not need to do that for the tracker
     discover_item("tag", urlparse.escape(tag))
   end
@@ -448,7 +480,9 @@ local function process_post(post, username, check, insane_url_extract)
     discover_item("user", step["postingProject"]["handle"])
   end
   
+  print_debug("Checking " .. post["singlePostPageUrl"] .. " for pure repost")
   if #post["astMap"]["spans"] == 0 and #post["blocks"] == 0 then
+    print_debug("Post is pure repost")
     pure_repost_posts[post["singlePostPageUrl"]] = true
   else
   
@@ -687,19 +721,20 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
   end
 
   if current_item_type == "user" then
-    -- Starting point
+    -- Starting point for non-"+" users
     if url:match("^https://cohost%.org/[^/%?]+$") then
+      assert(not current_item_value:match("%+"))
       if status_code == 200 then
         local loader_state = JSON:decode(load_html():match('<script type="application/json" id="__COHOST_LOADER_STATE__">(.-)</script>'))
         local capitalized_handle = loader_state["project-page-view"]["project"]["handle"]
-        if capitalized_handle ~= current_item_value then
-          assert(capitalized_handle:lower() == current_item_value:lower())
+        if capitalized_handle ~= current_user then
+          assert(capitalized_handle:lower() == current_user:lower())
           discover_item("user", capitalized_handle)
           cut_user_short = true
         else
           -- https://help.antisoftware.club/support/solutions/articles/62000226634-how-do-i-change-my-username-page-name-or-handle-
-          assert(current_item_value:match("^" .. USERNAME_RE .. "$"))
-          check("https://" .. current_item_value:lower() .. ".cohost.org/")
+          assert(current_user:match("^" .. USERNAME_RE .. "$"))
+          check("https://" .. current_user:lower() .. ".cohost.org/")
           
           check_user_metadata(loader_state["project-page-view"]["project"])
           
@@ -709,12 +744,18 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
             user_not_publicly_viewable = true
           else
             print_debug("User is publicly viewable")
-            check_profile_posts_listing(current_item_value, 0)
-            check("https://cohost.org/api/v1/trpc/users.displayPrefs,subscriptions.hasActiveSubscription,login.loggedIn,projects.followingState,projects.isReaderMuting,projects.isReaderBlocking?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%7D")
-            check("https://cohost.org/api/v1/trpc/users.displayPrefs,projects.followingState,projects.isReaderMuting,projects.isReaderBlocking?batch=1&input=%7B%221%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%2C%222%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%2C%223%22%3A%7B%22projectHandle%22%3A%22".. current_item_value .."%22%7D%7D")
+            check_profile_posts_listing(current_user, 0)
+            check("https://cohost.org/api/v1/trpc/users.displayPrefs,subscriptions.hasActiveSubscription,login.loggedIn,projects.followingState,projects.isReaderMuting,projects.isReaderBlocking?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22".. current_user .."%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22".. current_user .."%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22".. current_user .."%22%7D%7D")
+            check("https://cohost.org/api/v1/trpc/users.displayPrefs,projects.followingState,projects.isReaderMuting,projects.isReaderBlocking?batch=1&input=%7B%221%22%3A%7B%22projectHandle%22%3A%22".. current_user .."%22%7D%2C%222%22%3A%7B%22projectHandle%22%3A%22".. current_user .."%22%7D%2C%223%22%3A%7B%22projectHandle%22%3A%22".. current_user .."%22%7D%7D")
           end
         end
       end
+    end
+    
+    -- Starting point for "+" users
+    if current_item_value:match("%+") and url:match("^https://cohost%.org/" .. USERNAME_RE .. "?page=[0-9]+$") then
+      local page_number = current_item_value:match("%+([0-9]+)$")
+      check_profile_posts_listing(current_user, tonumber(page_number))
     end
     
     -- JS retrieved thru JS
@@ -729,24 +770,25 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
       assert(a)
       assert(a == b)
       print_debug("Weird static script: " .. a .. " looked up as " .. tostring(mystery_scripts[a]))
-      check("https://" .. current_item_value:lower() .. ".cohost.org/static/" .. a .. "." .. mystery_scripts[a] .. ".js")
+      check("https://" .. current_user:lower() .. ".cohost.org/static/" .. a .. "." .. mystery_scripts[a] .. ".js")
     end
     
     local posts_json = url:match("^https://cohost%.org/api/v1/trpc/posts%.profilePosts%?batch=1&input=(.*)$")
     if posts_json then
       local req_json = JSON:decode(urlparse.unescape(posts_json))
       local page = req_json["0"]["page"]
+      assert(page == tonumber((current_item_value:match("%+([0-9]+)$"))) or 0)
       local resp_json = JSON:decode(load_html())
       
       local pagination = resp_json[1]["result"]["data"]["pagination"]
       assert(pagination["morePagesForward"]) -- Unclear what this is - I think sometimes the navigaion buttons disappear and this controls it, but can't reproduce that now
       if #resp_json[1]["result"]["data"]["posts"] > 0 then
         assert(pagination["nextPage"] == page + 1)
-        check_profile_posts_listing(current_item_value, page + 1)
+        discover_item("user", current_user .. "+" .. tostring(page + 1))
       end
       
       for _, post in pairs(resp_json[1]["result"]["data"]["posts"]) do
-        process_post(post, current_item_value, check, insane_url_extract)
+        process_post(post, current_user, check, insane_url_extract)
       end
     end
         
@@ -758,9 +800,10 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     for username in load_html():gmatch('{"handle":"(' .. USERNAME_RE .. ')"') do
       discover_item("user", username)
     end
-    if tag_or_tagext_do_saturate then
+    if tag_or_tagext_do_saturate or tag_or_tagext_start_offset > 0 then
       print_debug("Carrying out saturation...")
       -- In big tags, due to deletions(?), offsets are often not multiples of 20; and in a way I haven't bothered to completely figure out this causes all offsets in range to be linked to, usually
+      -- "big" means either it's a tag: that queues tagext:, or it's a tagext: already
       for i = tag_or_tagext_start_offset,(tag_or_tagext_end_offset - 1) do
         check("https://cohost.org/rc/tagged/" .. tag_or_tagext_tag_content .. "?refTimestamp=" .. tag_or_tagext_timestamp .. "&skipPosts=" .. tostring(i), true)
       end
@@ -862,7 +905,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
   if status_code ~= 200 and status_code ~= 404
     and not (url["url"]:match("^https?://cohost%.org/[^/%?]+$") and status_code == 404)
     and not (not url_is_essential and status_code == 404)
-    and not (url["url"]:match("^https?://cdn%.iframe%.ly/") and JSON:decode(read_file(http_stat["local_file"]))["error"]:match("Iframely could not fetch the given URL")) 
+    and not (url["url"]:match("^https?://cdn%.iframe%.ly/") and status_code ~= 0 and JSON:decode(read_file(http_stat["local_file"]))["error"]:match("Iframely could not fetch the given URL")) 
     and not (status_code == 404 and url["url"]:match("^https://" ..USERNAME_RE .. "%.cohost%.org/")) -- Spurious extractions by DCP of relative links on subdomains. Outside subdomains these are backfed as spurious users so this only happens here. Seeing how peripheral subdomains are, I don't think this will ever indicate a problem worth our notice.
     and not (status_code == 403 and user_not_publicly_viewable)
     and not (status_code == 207 and url["url"]:match("posts%.singlePost"))

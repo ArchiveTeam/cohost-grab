@@ -17,11 +17,9 @@ some exact https://cohost.org/api/v1/trpc/users.displayPrefs,subscriptions.hasAc
 # TODO check if this is for any page but 0
 
 some exact https://cohost.org/api/v1/trpc/posts.profilePosts?batch=1&input=%7B%220%22%3A%7B%22projectHandle%22%3A%22sanqui%22%2C%22page%22%3A0%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Afalse%2C%22hideAsks%22%3Afalse%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
-some exact https://cohost.org/api/v1/trpc/posts.profilePosts?batch=1&input=%7B%220%22%3A%7B%22projectHandle%22%3A%22sanqui%22%2C%22page%22%3A1%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Afalse%2C%22hideAsks%22%3Afalse%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
 
 # Useless to us (possibly to check if a login has happened in another tab?), but required for playback
 some exact https://cohost.org/api/v1/trpc/login.loggedIn,users.displayPrefs,subscriptions.hasActiveSubscription,projects.isReaderMuting,projects.isReaderBlocking,projects.followingState,posts.profilePosts?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%226%22%3A%7B%22projectHandle%22%3A%22sanqui%22%2C%22page%22%3A0%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Afalse%2C%22hideAsks%22%3Afalse%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
-some exact https://cohost.org/api/v1/trpc/login.loggedIn,users.displayPrefs,subscriptions.hasActiveSubscription,projects.isReaderMuting,projects.isReaderBlocking,projects.followingState,posts.profilePosts?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%226%22%3A%7B%22projectHandle%22%3A%22sanqui%22%2C%22page%22%3A1%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Afalse%2C%22hideAsks%22%3Afalse%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
 
 some exact https://cohost.org/api/v1/trpc/login.loggedIn,users.displayPrefs,subscriptions.hasActiveSubscription,projects.isReaderMuting,projects.isReaderBlocking,projects.followingState,posts.profilePosts?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%226%22%3A%7B%22projectHandle%22%3A%22sanqui%22%2C%22page%22%3A0%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Atrue%2C%22hideAsks%22%3Atrue%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
 
@@ -50,7 +48,7 @@ some discovered usertag:sanqui/english%20translation%20patch
 not exact https://cohost.org/sanqui/tagged/english%20translation%20patch
 some exact https://cohost.org/sanqui/post/6020724-owl-and-a-crt
 not exact https://cohost.org/sanqui/tagged/look%20at%20me%20practicing%20POSSE
-some discovered usertag:look%20at%20me%20practicing%20POSSE
+some discovered usertag:sanqui/look%20at%20me%20practicing%20POSSE
 some discovered tag:look%20at%20me%20practicing%20POSSE
 
 # Ask
@@ -105,6 +103,10 @@ some exact https://cohost.org/api/v1/trpc/posts.profilePosts?batch=1&input=%7B%2
 some exact https://cohost.org/api/v1/trpc/posts.profilePosts?batch=1&input=%7B%220%22%3A%7B%22projectHandle%22%3A%22sanqui%22%2C%22page%22%3A1%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Atrue%2C%22hideAsks%22%3Atrue%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
 some exact https://cohost.org/api/v1/trpc/users.displayPrefs,posts.profilePosts?batch=1&input=%7B%221%22%3A%7B%22projectHandle%22%3A%22sanqui%22%2C%22page%22%3A1%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Atrue%2C%22hideAsks%22%3Atrue%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
 
+some exact https://cohost.org/api/v1/trpc/posts.profilePosts?batch=1&input=%7B%220%22%3A%7B%22projectHandle%22%3A%22sanqui%22%2C%22page%22%3A1%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Afalse%2C%22hideAsks%22%3Afalse%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
+some exact https://cohost.org/api/v1/trpc/login.loggedIn,users.displayPrefs,subscriptions.hasActiveSubscription,projects.isReaderMuting,projects.isReaderBlocking,projects.followingState,posts.profilePosts?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22sanqui%22%7D%2C%226%22%3A%7B%22projectHandle%22%3A%22sanqui%22%2C%22page%22%3A1%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Afalse%2C%22hideAsks%22%3Afalse%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
+
+
 # Ambivalent to whether we get subdomain resources
 some exact https://cohost.org/sanqui?page=1
 
@@ -121,7 +123,9 @@ some exact https://cohost.org/api/v1/trpc/login.loggedIn,users.displayPrefs,subs
 [user:Foxhack+2]
 some exact https://cohost.org/Foxhack?page=2
 # Image on this page but is a pure repost
-not exact https://staging.cohostcdn.org/attachment/17a2d496-3eef-41b7-a26f-1c52983452ae/image.png?width=675&auto=webp&dpr=2
+# Disabled - the + items get the HTML page before the API request, which means they do a DCP before pure_repost_posts is potentially set
+# This technically leads to duplication but seeing as we have 6k items left I can't be bothered, few GiB at most and that's probably an overestimate
+# not exact https://staging.cohostcdn.org/attachment/17a2d496-3eef-41b7-a26f-1c52983452ae/image.png?width=675&auto=webp&dpr=2
 # And back to normal
 some exact https://staging.cohostcdn.org/attachment/4bc5f4a7-ac1f-4788-86b8-b1a7fc33ba48/image.png
 some discovered https://www.theverge.com/2024/8/12/24219016/valve-deadlock-hands-on-secret-new-game
@@ -132,9 +136,20 @@ some exact https://staging.cohostcdn.org/attachment/9ad303fb-8200-47cd-bf44-19c3
 some discovered usertag:Foxhack/video%20game%20ad
 some discovered tag:video%20game%20ad
 
+[user:Foxhack+17]
+some exact https://cohost.org/Foxhack?page=17
+some exact https://cohost.org/Foxhack/post/658013-so-how-does-this-pla
+some exact https://foxhack.cohost.org/?page=17
+some discovered user:Foxhack+18
+
+[user:Foxhack+18]
+some exact https://cohost.org/Foxhack?page=18
+not regex .*/post/.*
+not discoveredregex ^user:Foxhack\\+.*
+
 [usertag:luckyplushy/my%20art]
-some regex ^https://cohost\.org/luckyplushy/tagged/my%20art\?refTimestamp=17\d+&skipPosts=20
-some regex ^https://cohost\.org/luckyplushy/tagged/my%20art\?refTimestamp=17\d+&skipPosts=60
+some regex ^https://cohost\\.org/luckyplushy/tagged/my%20art\\?refTimestamp=17\\d+&skipPosts=20
+some regex ^https://cohost\\.org/luckyplushy/tagged/my%20art\\?refTimestamp=17\\d+&skipPosts=60
 not exact https://staging.cohostcdn.org/attachment/1dcb6916-b7de-4f2e-8702-1c8d55b9a228/20231115_160048.jpg?width=675&auto=webp&dpr=1
 
 
@@ -146,6 +161,7 @@ some exact https://cohost.org/digitaldragons?page=0
 some exact https://digitaldragons.cohost.org/?page=0
 not exact https://cohost.org/digitaldragons?page=1 # Especially as these go on forever
 some exact https://cohost.org/api/v1/trpc/login.loggedIn,users.displayPrefs,subscriptions.hasActiveSubscription,projects.isReaderMuting,projects.isReaderBlocking,projects.followingState,posts.profilePosts?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22digitaldragons%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22digitaldragons%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22digitaldragons%22%7D%2C%226%22%3A%7B%22projectHandle%22%3A%22digitaldragons%22%2C%22page%22%3A0%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Afalse%2C%22hideAsks%22%3Afalse%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
+not discovered user:digitaldragons+1
 
 # User with embeds
 [user:sixlegendsgame]
@@ -156,6 +172,26 @@ not exact https://iframely.net/api/thumbnail?url=https%3A%2F%2Fstore.steampowere
 not discovered https://store.steampowered.com/app/2768130/
 not exact https://cdn.iframe.ly/api/iframely?url=https%3a%2f%2fstore%2esteampowered%2ecom%2fapp%2f2768130%2f&key=db0b365a626eb72ce8c169cd30f99ac2&iframe=1&omit_script=1 # This is escaped as the script does it rather than the browser
 not exact https://iframely.net/api/iframe?app=1&url=https%3A%2F%2Fstore.steampowered.com%2Fapp%2F2768130%2F&key=db0b365a626eb72ce8c169cd30f99ac2
+
+
+not exact https://staging.cohostcdn.org/attachment/ed35dcd5-1dca-4f58-b5a5-19e790149329/davinci.png?width=337&height=197&fit=crop&auto=webp&dpr=1
+not exact https://staging.cohostcdn.org/attachment/2083ef06-b9ba-422f-80cf-2639cfeed009/Steam.jpg?width=337&height=197&fit=crop&auto=webp&dpr=1
+not exact https://staging.cohostcdn.org/attachment/76d8ccfb-d793-4a8a-a934-954a25bd99f9/Final%20Cutscene%20Climax.png?width=337&height=245&fit=crop&auto=webp&dpr=1
+not exact https://staging.cohostcdn.org/attachment/1f240eb2-370c-4b26-a056-f10dff54cc72/dragondancelunarnewyear.png
+some discovered user:sixlegendsgame+1
+
+[user:sixlegendsgame+1]
+some exact https://iframely.net/api/thumbnail?url=https%3A%2F%2Fyoutu.be%2FL0AGUYXU0ag&key=db0b365a626eb72ce8c169cd30f99ac2&maxwidth=960 # Shows when you allow the Youtube URL, but before playing
+some discovered https://youtu.be/L0AGUYXU0ag
+some discovered user:sixlegendsgame+2
+
+# Not going to get the actual Youtube content - if we want to do that, #// can handle it
+# Second embed (same post)
+some exact https://iframely.net/api/thumbnail?url=https%3A%2F%2Fstore.steampowered.com%2Fapp%2F2768130%2F&key=db0b365a626eb72ce8c169cd30f99ac2&maxwidth=960
+some discovered https://store.steampowered.com/app/2768130/
+some exact https://cdn.iframe.ly/api/iframely?url=https%3a%2f%2fstore%2esteampowered%2ecom%2fapp%2f2768130%2f&key=db0b365a626eb72ce8c169cd30f99ac2&iframe=1&omit_script=1 # This is escaped as the script does it rather than the browser
+some exact https://iframely.net/api/iframe?app=1&url=https%3A%2F%2Fstore.steampowered.com%2Fapp%2F2768130%2F&key=db0b365a626eb72ce8c169cd30f99ac2
+
 # Half-height images
 some exact https://staging.cohostcdn.org/attachment/ed35dcd5-1dca-4f58-b5a5-19e790149329/davinci.png?width=337&height=197&fit=crop&auto=webp&dpr=1
 # N.b. the ones below this might be from +1, I haven't checked them
@@ -164,17 +200,6 @@ some exact https://staging.cohostcdn.org/attachment/76d8ccfb-d793-4a8a-a934-954a
 # And a full image, just to make sure
 some exact https://staging.cohostcdn.org/attachment/1f240eb2-370c-4b26-a056-f10dff54cc72/dragondancelunarnewyear.png
 
-[user:sixlegendsgame+1]
-some exact https://iframely.net/api/thumbnail?url=https%3A%2F%2Fyoutu.be%2FL0AGUYXU0ag&key=db0b365a626eb72ce8c169cd30f99ac2&maxwidth=960 # Shows when you allow the Youtube URL, but before playing
-some discovered https://youtu.be/L0AGUYXU0ag
-some discovered sixlegendsgame+2
-
-# Not going to get the actual Youtube content - if we want to do that, #// can handle it
-# Second embed (same post)
-some exact https://iframely.net/api/thumbnail?url=https%3A%2F%2Fstore.steampowered.com%2Fapp%2F2768130%2F&key=db0b365a626eb72ce8c169cd30f99ac2&maxwidth=960
-some discovered https://store.steampowered.com/app/2768130/
-some exact https://cdn.iframe.ly/api/iframely?url=https%3a%2f%2fstore%2esteampowered%2ecom%2fapp%2f2768130%2f&key=db0b365a626eb72ce8c169cd30f99ac2&iframe=1&omit_script=1 # This is escaped as the script does it rather than the browser
-some exact https://iframely.net/api/iframe?app=1&url=https%3A%2F%2Fstore.steampowered.com%2Fapp%2F2768130%2F&key=db0b365a626eb72ce8c169cd30f99ac2
 
 
 
@@ -187,6 +212,26 @@ maxrequests 3
 [user:sanquI]
 some discovered user:sanqui
 maxrequests 400
+not discovered user:sanquI+1
+not discovered user:sanqui+1
+
+# Someone who seems to have tried to break the tag system with punctuation
+[user:this-page-will-break-do-not-repost]
+some discovered usertag:this-page-will-break-do-not-repost/%3f
+some discovered usertag:this-page-will-break-do-not-repost/%2f
+not discovered usertag:this-page-will-break-do-not-repost/?
+not discovered usertag:this-page-will-break-do-not-repost//
+some discovered tag:%3f
+some discovered tag:%2f
+not discovered tag:?
+not discovered tag:/
+
+[usertag:this-page-will-break-do-not-repost/%3f]
+some exact https://cohost.org/this-page-will-break-do-not-repost/tagged/%3f
+
+[tag:%2f]
+some exact https://cohost.org/rc/tagged/%2f
+not discoveredregex tagext:.*
 
 # Post with redirecting media URL in some meta tag
 [post:tangledmacrame/post/1307301-empty]
@@ -206,17 +251,17 @@ some exact https://cohost.org/rc/tagged/video%20game%20preservation
 some regex ^https?://cohost\\.org/rc/tagged/video%20game%20preservation\\?refTimestamp=17\\d+&skipPosts=40
 some discovered user:kaceydotme
 some discovered user:witchpixels
-not discoveredregex tagext:50/17\d+/video%20game%20preservation
+not discoveredregex tagext:50/17\\d+/video%20game%20preservation
 
 [tag:furry]
 some exact https://cohost.org/rc/tagged/furry
 some regex ^https?://cohost\\.org/rc/tagged/furry\\?refTimestamp=17\\d+&skipPosts=40
 some regex ^https?://cohost\\.org/rc/tagged/furry\\?refTimestamp=17\\d+&skipPosts=49
 not regex ^https?://cohost\\.org/rc/tagged/furry\\?refTimestamp=17\\d+&skipPosts=\d{4}
-some discoveredregex tagext:50/17\d+/furry
+some discoveredregex tagext:50/17\\d+/furry
 
 [tag:furby]
-some discoveredregex tagext:50/17\d+/furby
+some discoveredregex tagext:50/17\\d+/furby
 
 [tagext:50/1731051700701/furby]
 some discovered tagext:100/1731051700701/furby # As there is a "next" link on p 99
@@ -228,4 +273,4 @@ not discoveredregex tagext:.*
 
 # Single quote and explamation mark get pre-urldecoded by wget
 [tag:We%27ll%20see%20if%20that%20helps%21%21]
-some regex ^https?://cohost.org/.*
+some regex ^https?://cohost\\.org/.*
