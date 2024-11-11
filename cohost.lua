@@ -515,9 +515,9 @@ local function process_post(post, username, check, insane_url_extract)
           and only_child then
           check("https://cdn.iframe.ly/api/iframely?url=" .. urlparse.escape(href) .. "&key=" .. iframely_key .. "&iframe=1&omit_script=1")
         else
-          print_debug("Skipped getting a tag because", node["children"] ~= nil, #node["children"] == 1, node["children"][1]["type"] == "text",
+          --[[print_debug("Skipped getting a tag because", node["children"] ~= nil, #node["children"] == 1, node["children"][1]["type"] == "text",
           node["position"], node["children"][1]["position"], node["children"][1]["position"]["start"]["offset"] == node["position"]["start"]["offset"],
-          only_child)
+          only_child)]]
         end
       elseif node["tagName"] == "img" then
         check(node["properties"]["src"], true) -- Force as it is an embedded image, not a link
