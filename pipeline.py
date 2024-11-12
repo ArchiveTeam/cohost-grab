@@ -58,7 +58,7 @@ if not WGET_AT:
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = '20241111.01'
+VERSION = '20241112.01'
 USER_AGENT = 'Archiveteam (https://wiki.archiveteam.org/; communicate at https://webirc.hackint.org/#ircs://irc.hackint.org/#archiveteam)'
 TRACKER_ID = 'cohost'
 TRACKER_HOST = 'legacy-api.arpa.li'
@@ -100,10 +100,10 @@ class CheckIP(SimpleTask):
 
             # NEW for 2021! More network checks
             # 1 - TOR
-            if "Congratulations" in requests.get("https://check.torproject.org/").text:
-              msg = "You seem to be using TOR."
-              item.log_output(msg)
-              raise Exception(msg)
+            # if "Congratulations" in requests.get("https://check.torproject.org/").text:
+            #   msg = "You seem to be using TOR."
+            #   item.log_output(msg)
+            #   raise Exception(msg)
 
 
             # 2 - NXDOMAIN hijacking (could be eliminated for some projects)
