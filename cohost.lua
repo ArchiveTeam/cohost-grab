@@ -107,10 +107,11 @@ set_new_item = function(url)
 end
 
 discover_item = function(item_type, item_name)
+  print_debug("Trying to discover " .. item_type .. ":" .. item_name)
   assert(item_type)
   assert(item_name)
   -- Assert that if the page (or something in the script, erroneously) is giving us an alternate form with different capitalization, there is only one form
-  if string.lower(item_name) == string.lower(current_item_value) and item_name ~= current_item_value then
+  if item_type == "user" and current_item_type == "user" and string.lower(item_name) == string.lower(current_item_value) and item_name ~= current_item_value then
     if current_item_value_proper_capitalization ~= nil then
       assert(current_item_value_proper_capitalization == item_name)
     else
@@ -191,6 +192,10 @@ allowed = function(url, parenturl, forced)
   
   if url == "https://cohost.org/sanqui/tagged/&" then
     -- Started timing out for no reason, causing tests to fail
+    return false
+  end
+  
+  if #url > 5000 and (url:match("data:[a-z]+/[a-z]+;base64")) then
     return false
   end
   
@@ -642,8 +647,11 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     -- Cohost-specific
     for username in string.gmatch(html, "[^%w]@(" .. USERNAME_RE .. ")") do
       if #username > 3 and #username < 500 then
-          discover_item("user", username)
-          print_debug("Heuristically discovering user:" .. username)
+          -- Check so that it doesn't trip up the canonical-capitalization detection in discover_item
+          if username:lower() ~= current_item_value:lower() then
+            discover_item("user", username)
+            print_debug("Heuristically discovering user:" .. username)
+          end
       end
     end
     print_debug("IUE end")
@@ -827,7 +835,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
   if current_item_type == "post" or current_item_type == "user" then
     if url:match("^https?://cdn%.iframe%.ly/api/iframely") then
       local json = JSON:decode(load_html())
-      if not json["error"] then
+      if not json["error"] and json["html"] then
         local src = json["html"]:match("iframe src=\"(https://iframely%.net/api/iframe%?.-)\"")
         check(src)
       end

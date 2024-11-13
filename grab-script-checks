@@ -246,6 +246,19 @@ some exact https://cohost.org/LeminWedj/post/4049956-no-discrimination
 [user:lazuliterecursion]
 some exact https://cohost.org/lazuliterecursion/rss/public.json
 
+# What it looks like
+[user:sailorhannibal+4]
+not regex .*base64.*
+
+# Embed with no HTML (domain parking page)
+[user:decispark+1]
+some exact https://cdn.iframe.ly/api/iframely?url=https%3a%2f%2fabout%2elive%2espace%2fpost%2fthank%2dyou&key=db0b365a626eb72ce8c169cd30f99ac2&iframe=1&omit_script=1
+
+# Bluesky handle with same name as user but diff capitalization - gets read in as a divergence of Cohost caps
+[user:RunningDlog]
+some exact https://iframely.net/api/iframe?app=1&url=https%3A%2F%2Fbsky.app%2Fprofile%2Frunningdlog.bsky.social&key=db0b365a626eb72ce8c169cd30f99ac2
+
+
 [tag:video%20game%20preservation]
 some exact https://cohost.org/rc/tagged/video%20game%20preservation
 some regex ^https?://cohost\\.org/rc/tagged/video%20game%20preservation\\?refTimestamp=17\\d+&skipPosts=40
