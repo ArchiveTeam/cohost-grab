@@ -58,7 +58,7 @@ if not WGET_AT:
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = '20241119.02'
+VERSION = '20241127.01'
 USER_AGENT = 'Archiveteam (https://wiki.archiveteam.org/; communicate at https://webirc.hackint.org/#ircs://irc.hackint.org/#archiveteam)'
 TRACKER_ID = 'cohost'
 TRACKER_HOST = 'legacy-api.arpa.li'
@@ -299,13 +299,13 @@ project = Project(
     title = 'cohost',
     project_html = '''
     <img class="project-logo" alt="logo" src="https://wiki.archiveteam.org/images/4/41/Cohost_logo.png" height="50px"/>
-    <h2>Cohost <span class="links"><a href="https://cohost.org/">Website</a> &middot; <a href="http://tracker.archiveteam.org/cohost/">Leaderboard</a></span></h2>
+    <h2>Cohost <span class="links"><a href="https://cohost.org/">Website</a> &middot; <a href="https://tracker.archiveteam.org/cohost/">Leaderboard</a></span></h2>
     ''',
     utc_deadline = datetime.datetime(2025,1,1, 0,0,0))
 
 pipeline = Pipeline(
     CheckIP(),
-    GetItemFromTracker('http://{}/{}/multi={}/'
+    GetItemFromTracker('https://{}/{}/multi={}/'
         .format(TRACKER_HOST, TRACKER_ID, MULTI_ITEM_SIZE),
         downloader, VERSION),
     PrepareDirectories(warc_prefix='cohost'),
@@ -334,7 +334,7 @@ pipeline = Pipeline(
         name='shared:rsync_threads', title='Rsync threads',
         description='The maximum number of concurrent uploads.'),
         UploadWithTracker(
-            'http://%s/%s' % (TRACKER_HOST, TRACKER_ID),
+            'https://%s/%s' % (TRACKER_HOST, TRACKER_ID),
             downloader=downloader,
             version=VERSION,
             files=[
