@@ -1,7 +1,11 @@
 # cohost-grab
 
-More information about the archiving project can be found on the ArchiveTeam wiki: [cohost](https://wiki.archiveteam.org/index.php?title=cohost)
+cohost-grab
+=============
+This is a script you can run to grab the Cohost site.
 
+
+More information about the Cohost archiving project can be found on the ArchiveTeam wiki: [Cohost](https://wiki.archiveteam.org/index.php?title=Cohost)
 ## Setup instructions
 
 ### General instructions
