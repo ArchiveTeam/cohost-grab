@@ -326,6 +326,14 @@ wget.callbacks.download_child_p = function(urlpos, parent, depth, start_url_pars
   if urlpos["url"]["url"]:match(post_re) and parent["url"]:match(post_re) then
     return false
   end
+  print_debug("DCP info", urlpos["url"]["url"], urlpos["link_expect_html"], urlpos["link_inline_p"])
+  -- More stuff that DCP and only DCP is picking up (posts discussing Cohost internals)
+  if (parent["url"]:match("^https?://cohost%.org/" .. USERNAME_RE .. "/") or parent["url"]:match("^https?://" .. USERNAME_RE .. "cohost%.org/"))
+    and urlpos["url"]["url"]:match("^https?://cohost%.org/api/") 
+    and urlpos["link_expect_html"] == 1 and urlpos["link_inline_p"] == 0 then
+    return false
+  end
+  
   if allowed(url, parent["url"]) then
     addedtolist[url] = true
     print_debug("DCP allowed " .. url)
@@ -908,12 +916,16 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
     url_is_essential = false
     print_debug("Inessential URL")
   end
+  
+  local function iframely_error_allowed(text)
+    return text:match("Iframely could not fetch the given URL") or text:match("Publisher redirected to login page")
+  end
 
   -- Whitelist instead of blacklist status codes
   if status_code ~= 200 and status_code ~= 404
     and not (url["url"]:match("^https?://cohost%.org/[^/%?]+$") and status_code == 404)
     and not (not url_is_essential and status_code == 404)
-    and not (url["url"]:match("^https?://cdn%.iframe%.ly/") and status_code ~= 0 and JSON:decode(read_file(http_stat["local_file"]))["error"]:match("Iframely could not fetch the given URL")) 
+    and not (url["url"]:match("^https?://cdn%.iframe%.ly/") and status_code ~= 0 and iframely_error_allowed(JSON:decode(read_file(http_stat["local_file"]))["error"])) 
     and not (status_code == 404 and url["url"]:match("^https://" ..USERNAME_RE .. "%.cohost%.org/")) -- Spurious extractions by DCP of relative links on subdomains. Outside subdomains these are backfed as spurious users so this only happens here. Seeing how peripheral subdomains are, I don't think this will ever indicate a problem worth our notice.
     and not (status_code == 403 and user_not_publicly_viewable)
     and not (status_code == 207 and url["url"]:match("posts%.singlePost"))
