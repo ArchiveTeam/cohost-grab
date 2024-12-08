@@ -195,7 +195,7 @@ allowed = function(url, parenturl, forced)
     return false
   end
   
-  if #url > 5000 and (url:match("data:[a-z]+/[a-z]+;base64")) then
+  if #url > 5000 and (url:match("data:[a-z]+/[a-zA-Z0-9%-%+_]+;base64")) then
     return false
   end
   
