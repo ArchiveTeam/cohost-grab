@@ -448,9 +448,11 @@ local function check_post_attachments(post, check)
   -- post-body.tsx:188
   if forceAttachmentsToTop then
     local blocks = fun.iter(post["blocks"])
-    -- The JS flattens rows out, as if it supports them, but then seems to render them *again* when it processes the block - I am lacking an example for what actually happens here
-    -- (Sadly if we need to do it like the JS/TS seems to do, Luafun doesn't have flatmap)
-    assert(not blocks:any(function(b) return b["type"] == "attachment-row" end))
+    -- If normal attachement blocks and rows are mixed, it looks like the posts within rows get rendered twice
+    --  after they are flattened down into attachmentBlocks
+    -- https://cohost.org/scatterbrain/post/4218817-roundup-of-the-choic demonstrates what happens when it is *all* rows; all non-rows are very common
+    assert((not blocks:any(function(b) return b["type"] == "attachment-row" end))
+        or (not blocks:any(function(b) return b["type"] == "attachment" end)))
     local blocks = blocks:filter(function(b) return b["type"] == "attachment" end)
     if blocks:length() > 0 then
       check_attachment_group(blocks, false)

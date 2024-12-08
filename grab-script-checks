@@ -242,6 +242,19 @@ some exact https://staging.cohostcdn.org/attachment/92f06b0e-faee-429c-8cf7-f5cc
 [post:LeminWedj/post/4049956-no-discrimination]
 some exact https://cohost.org/LeminWedj/post/4049956-no-discrimination
 
+# Finally an instance of forceAttachmentsToTop with rows
+# The important thing seems to be that it's *all* rows so the block that would do the redundant rendering doesn't happen
+[post:scatterbrain/post/4218817-roundup-of-the-choic]
+some exact https://proxy-staging.cohostcdn.org/Yxc5szOBZooBv03630ZDEXY7at37OVn0t3eowkP0cnw/f:png/czM6Ly9jb2hvc3QtcHJvZC9hdHRhY2htZW50LzM5ZjRiZWYwLWRjMDYtNDE3Zi1hODA3LWYyYzg2YjA5MDJhNC9mcm9nLXB1ZmYuZ2lm?width=337&height=337&fit=crop&auto=webp&dpr=2
+some exact https://proxy-staging.cohostcdn.org/ulrb3ZUeO8B7lZVIlhVKk3Mkps4ImKFVUJBhiV4VBpA/f:png/czM6Ly9jb2hvc3QtcHJvZC9hdHRhY2htZW50L2RiNjY2MjIwLWMxNjEtNDYxMi04OThmLTUxNTc5NjYzM2JhOS9tb3VzZS1hbGVydC5naWY?width=337&height=337&fit=crop&auto=webp&dpr=2
+some exact https://proxy-staging.cohostcdn.org/cVHBDFQI_CHeJj6l1kNfsUxY-9dw_lPqe4vxuFxGXdA/f:png/czM6Ly9jb2hvc3QtcHJvZC9hdHRhY2htZW50Lzg5MWQzZDg3LTk4YjctNGMyZS1hN2MyLTM2MWY1ZDI3NTVjZS9zY2lzc29yc2xpbWUtd2Fsay5naWY?width=337&height=337&fit=crop&auto=webp&dpr=2
+some exact https://proxy-staging.cohostcdn.org/JZGJeyA-3QFjn9uHXlxT2__pqfau3cXX8B1iPeTcPF8/f:png/czM6Ly9jb2hvc3QtcHJvZC9hdHRhY2htZW50LzZhMWY1YTk4LWQ4OTAtNDE2Zi1iOTIwLTM0OTMyYjQ0MDBkZi9raW5ndG9hc3QuZ2lm?width=337&height=337&fit=crop&auto=webp&dpr=2
+some exact https://staging.cohostcdn.org/attachment/db666220-c161-4612-898f-515796633ba9/mouse-alert.gif?width=337&height=337&fit=crop&auto=webp&dpr=2
+some exact https://staging.cohostcdn.org/attachment/db666220-c161-4612-898f-515796633ba9/mouse-alert.gif
+some exact https://staging.cohostcdn.org/attachment/39f4bef0-dc06-417f-a807-f2c86b0902a4/frog-puff.gif
+some exact https://staging.cohostcdn.org/attachment/6a1f5a98-d890-416f-b920-34932b4400df/kingtoast.gif
+
+
 # Account content hidden to logged-out users
 [user:lazuliterecursion]
 some exact https://cohost.org/lazuliterecursion/rss/public.json
