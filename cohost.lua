@@ -745,9 +745,17 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
       if status_code == 200 then
         local loader_state = JSON:decode(load_html():match('<script type="application/json" id="__COHOST_LOADER_STATE__">(.-)</script>'))
         local capitalized_handle = loader_state["project-page-view"]["project"]["handle"]
+        
+        if load_html():match('<h1 class="text%-xl font%-bold">this page is not viewable by logged%-out users</h1>')
+          or load_html():match('<h1 class="text%-xl font%-bold">this page is private</h1>') then
+          print_debug("User not publicly viewable")
+          user_not_publicly_viewable = true
+        end
+        
         if capitalized_handle ~= current_user then
           assert(capitalized_handle:lower() == current_user:lower())
           discover_item("user", capitalized_handle)
+          print_debug("Cutting user short")
           cut_user_short = true
         else
           -- https://help.antisoftware.club/support/solutions/articles/62000226634-how-do-i-change-my-username-page-name-or-handle-
@@ -756,11 +764,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
           
           check_user_metadata(loader_state["project-page-view"]["project"])
           
-          if load_html():match('<h1 class="text%-xl font%-bold">this page is not viewable by logged%-out users</h1>')
-            or load_html():match('<h1 class="text%-xl font%-bold">this page is private</h1>') then
-            print_debug("User not publicly viewable")
-            user_not_publicly_viewable = true
-          else
+          if not user_not_publicly_viewable then
             print_debug("User is publicly viewable")
             check_profile_posts_listing(current_user, 0)
             check("https://cohost.org/api/v1/trpc/users.displayPrefs,subscriptions.hasActiveSubscription,login.loggedIn,projects.followingState,projects.isReaderMuting,projects.isReaderBlocking?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22".. current_user .."%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22".. current_user .."%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22".. current_user .."%22%7D%7D")

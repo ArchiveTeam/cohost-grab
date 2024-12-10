@@ -271,6 +271,9 @@ some exact https://cdn.iframe.ly/api/iframely?url=https%3a%2f%2fabout%2elive%2es
 [user:RunningDlog]
 some exact https://iframely.net/api/iframe?app=1&url=https%3A%2F%2Fbsky.app%2Fprofile%2Frunningdlog.bsky.social&key=db0b365a626eb72ce8c169cd30f99ac2
 
+# Miscapitalized version of private page, make sure the 403 on the rss feed is allowed even tho a lot of processing is being skipped
+[user:ribbonBlack]
+some exact https://cohost.org/RibbonBlack/rss/public.json
 
 [tag:video%20game%20preservation]
 some exact https://cohost.org/rc/tagged/video%20game%20preservation
