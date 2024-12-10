@@ -922,6 +922,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
   local function iframely_error_allowed(text)
     return text:match("Iframely could not fetch the given URL") or text:match("Publisher redirected to login page")
       or text:match("This URL is not allowed on") or text:match("This page is private")
+      or text:match("This looks like JS app with no prerender")
   end
 
   -- Whitelist instead of blacklist status codes
