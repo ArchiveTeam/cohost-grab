@@ -275,6 +275,13 @@ some exact https://iframely.net/api/iframe?app=1&url=https%3A%2F%2Fbsky.app%2Fpr
 [user:ribbonBlack]
 some exact https://cohost.org/RibbonBlack/rss/public.json
 
+# More discussion of Cohost internals
+# (I think in some future crawler it'd be nice to be able to pass a deliminator param to the extractor of "handle links extracted between element matching X and element matching Y differently", so they don't get seen as part of the UI etc)
+[user:username]
+not exact https://username.cohost.org/rss/public
+some exact https://cohost.org/username/post/86054-my-first-post
+
+
 # "Https" in URL results in an "a" tag having no href
 [post:muffinlord/post/7932618-https-social-minim]
 some exact https://cohost.org/api/v1/trpc/posts.singlePost?batch=1&input=%7B%220%22:%7B%22handle%22:%22muffinlord%22,%22postId%22:7932618%7D%7D # This is an URL used solely by the post: testing item

@@ -327,9 +327,9 @@ wget.callbacks.download_child_p = function(urlpos, parent, depth, start_url_pars
     return false
   end
   print_debug("DCP info", urlpos["url"]["url"], urlpos["link_expect_html"], urlpos["link_inline_p"])
-  -- More stuff that DCP and only DCP is picking up (posts discussing Cohost internals)
+  -- More stuff that DCP and only DCP is picking up (posts discussing Cohost internals/URLs)
   if (parent["url"]:match("^https?://cohost%.org/" .. USERNAME_RE .. "/") or parent["url"]:match("^https?://" .. USERNAME_RE .. "cohost%.org/"))
-    and urlpos["url"]["url"]:match("^https?://cohost%.org/api/") 
+    and (urlpos["url"]["url"]:match("^https?://cohost%.org/api/") or urlpos["url"]["url"]:match("^https?://" .. USERNAME_RE .. "%.cohost%.org/rss/") or urlpos["url"]["url"]:match("^https?://cohost%.org/" .. USERNAME_RE .. "/rss/" ))
     and urlpos["link_expect_html"] == 1 and urlpos["link_inline_p"] == 0 then
     return false
   end
