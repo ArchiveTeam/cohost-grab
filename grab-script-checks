@@ -314,6 +314,12 @@ some discovered https://cohost.org/static/edcc39b1702e4bd4b95e.svg
 some discovered https://cohost.org/static/edcc39b1702e4bd4b95e.svg?width=675&auto=webp&dpr=1
 some discovered https://cohost.org/static/8196.9488211cfaad004027c2.js
 
+# Link to a tag on a subdomain page within post body
+[user:staff+6]
+some exact https://staff.cohost.org/tagged/financials
+some discovered usertag:staff/financials
+not exact https://cohost.org/staff/tagged/financials
+
 [tag:video%20game%20preservation]
 some exact https://cohost.org/rc/tagged/video%20game%20preservation
 some regex ^https?://cohost\\.org/rc/tagged/video%20game%20preservation\\?refTimestamp=17\\d+&skipPosts=40

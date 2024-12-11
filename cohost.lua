@@ -297,7 +297,9 @@ allowed = function(url, parenturl, forced)
         return true
       end
     else
-      discover_item("user", user)
+      if user:match(USERNAME_RE) then
+        discover_item("user", user)
+      end
       return false
     end
   end
@@ -910,6 +912,14 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
   end
   redirects_level = 0
   
+  if status_code >= 300 and status_code <= 399 and url["url"]:match("^https?://" .. USERNAME_RE .. "%.cohost%.org/tagged/") then
+    local newloc = urlparse.absolute(url["url"], http_stat["newloc"])
+    local userm, tagm = newloc:match("^https?://cohost%.org/(" .. USERNAME_RE .. ")/tagged/(.+)")
+    assert(userm == current_user)
+    discover_item("usertag", userm .. "/" .. tagm)
+    return wget.actions.EXIT
+  end
+  
   if url["url"]:match("^https?://cohost%.org/api/v1/attachments/") or url["url"]:match("^https://cohost%.org/rc/attachment%-redirect/") then
     error("URL should have had a redirect on it")
   end
@@ -1040,7 +1050,7 @@ wget.callbacks.write_to_warc = function(url, http_stat)
           and http_stat["statcode"] ~= 200 and http_stat["statcode"] ~= 404
           and not (
             (http_stat["statcode"] == 301 or http_stat["statcode"] == 302) and
-            (string.match(url["url"], "^https?://cohost%.org/api/v1/attachments/") or "^https://cohost%.org/rc/attachment%-redirect/")
+            (string.match(url["url"], "^https?://cohost%.org/api/v1/attachments/") or string.match(url["url"], "^https://cohost%.org/rc/attachment%-redirect/") or string.match(url["url"], "^https?://" .. USERNAME_RE .. "%.cohost%.org/tagged/"))
           )
           and not (http_stat["statcode"] == 403 and user_not_publicly_viewable)
           and not (http_stat["statcode"] == 207 and url["url"]:match("posts%.singlePost"))
