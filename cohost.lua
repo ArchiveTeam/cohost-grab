@@ -269,6 +269,7 @@ allowed = function(url, parenturl, forced)
   end
   
   if string.match(url, "^https?://cohost.org/static/") then
+    discover_url(url)
     return false -- We still get /static on custom subdomains
   end
   
@@ -354,7 +355,7 @@ local function check_post_attachments(post, check)
   
   -- use-image-optimizer.ts (and a few others)
   local function check_srcWithDpr(src, maxWidth, aspectRatio)
-    assert(src:match("^https://[^%.]+%.cohostcdn"))
+    assert(src:match("^https://[^%.]+%.cohostcdn") or src:match("^https?://cohost%.org/static/"))
     src = src .. "?width=" .. tostring(math.floor(maxWidth))
     if aspectRatio then
       src = src .. "&height=" .. tostring(math.floor(maxWidth / aspectRatio))

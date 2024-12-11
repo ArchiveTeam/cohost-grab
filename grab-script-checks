@@ -308,6 +308,12 @@ some exact https://cohost.org/muffinlord/post/7932618-https-social-minim
 #[post:squidcrusher/post/1776580-empty]
 #some exact https://proxy-staging.cohostcdn.org/nOSLvsw_ljNMDjcO8HsWRGDs6hGYPw6_63z3eQ4GsdE/f:png/czM6Ly9yZWRjZW50LWRldi9hdHRhY2htZW50LzJjZWRjM2Y2LWVkOWYtNDBhYi1hNDBmLWUyMzZjOWFmYTQwYy9za3lib3guZ2lm?width=337&height=328&fit=crop&auto=webp&dpr=1
 
+# "This post contains an invalid attachment!" - do not crash and queue the placeholder image to #//
+[post:Enderleaf/post/6646030-wof-adopts]
+some discovered https://cohost.org/static/edcc39b1702e4bd4b95e.svg
+some discovered https://cohost.org/static/edcc39b1702e4bd4b95e.svg?width=675&auto=webp&dpr=1
+some discovered https://cohost.org/static/8196.9488211cfaad004027c2.js
+
 [tag:video%20game%20preservation]
 some exact https://cohost.org/rc/tagged/video%20game%20preservation
 some regex ^https?://cohost\\.org/rc/tagged/video%20game%20preservation\\?refTimestamp=17\\d+&skipPosts=40
