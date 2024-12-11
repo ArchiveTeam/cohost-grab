@@ -349,7 +349,7 @@ local function check_post_attachments(post, check)
   print_debug("Checking attachments of post " .. post["singlePostPageUrl"])
   -- sanitize.tsx
   local forceAttachmentsToTop = post["publishedAt"] < "2024-02-12T12:00:00-08:00"
-  local layoutBehaviorIsV2 = post["publishedAt"] < "2024-03-27T12:00:00-08:00"
+  local layoutBehaviorIsV2 = post["publishedAt"] >= "2024-03-27T12:00:00-08:00"
 
   
   -- use-image-optimizer.ts (and a few others)
@@ -411,7 +411,7 @@ local function check_post_attachments(post, check)
   
   local function check_attachment_group(atts, is_explicit_row)
     if is_explicit_row then
-      assert(atts:length() < 4) -- Never seen this in the wild
+      assert(atts:length() < 4 or atts:length() % 2 == 0) -- Haven't seen the rest in the wild
     end
     -- Cannot find any examples of audio and images in the same post, except where images are all in a row - https://cohost.org/emmmmmmmm/post/7888842-empty
     -- If you do find counterexample - layouts seem to handle them specially

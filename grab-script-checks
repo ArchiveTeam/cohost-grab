@@ -281,6 +281,22 @@ some exact https://cohost.org/RibbonBlack/rss/public.json
 not exact https://username.cohost.org/rss/public
 some exact https://cohost.org/username/post/86054-my-first-post
 
+# 10 attachments (and a remark that "wow they really let you go up to 10 now huh.")
+[post:gadget/post/7868919-assorted-drawings-fr]
+some exact https://staging.cohostcdn.org/attachment/23a4c5a2-00e7-4f69-8089-2c7517945965/2023-12-26_06-43-20-814_firefox_KLDB1Z7bjx.png?width=337&height=290&fit=crop&auto=webp&dpr=2
+some exact https://staging.cohostcdn.org/attachment/458b7f61-77fc-47ad-8e8d-e20ad5b36d5d/2024-04-02_02-45-36-334_firefox_lwsit2KCJo.png?width=337&height=290&fit=crop&auto=webp&dpr=2
+some exact https://staging.cohostcdn.org/attachment/a1b73bcd-6e4f-4df8-b100-52d352eb7d94/2024-01-21_09-11-18-784_CLIPStudioPaint_VK5xer38OW.png?width=337&height=388&fit=crop&auto=webp&dpr=2
+some exact https://staging.cohostcdn.org/attachment/c741fe71-052d-4d91-aa04-27f255ae6c9b/2024-02-10_06-02-47-129_CLIPStudioPaint_8jvIsdHuKL.png?width=337&height=388&fit=crop&auto=webp&dpr=2
+some exact https://staging.cohostcdn.org/attachment/91bf6f90-c965-49e8-abc2-fd8f6b594b37/2024-09-11_22-25-15-468_CLIPStudioPaint_aErN1lq2bE.png?width=337&height=341&fit=crop&auto=webp&dpr=2
+some exact https://staging.cohostcdn.org/attachment/96bce936-f9bf-4b68-8491-b02924e85d4a/2024-04-15_21-11-41-483_chrome_Awr6Wqvp47.png?width=337&height=341&fit=crop&auto=webp&dpr=2
+some exact https://staging.cohostcdn.org/attachment/d60252b5-b6ee-4945-b17f-9c7186f1cf76/2024-04-15_21-12-00-083_chrome_fPYblIx0YR.png?width=337&height=430&fit=crop&auto=webp&dpr=2
+some exact https://staging.cohostcdn.org/attachment/82057609-8ca5-4850-9452-e5cf23846d9e/2024-05-20_22-55-44-388_chrome_xgHB9XrPnW.png?width=337&height=430&fit=crop&auto=webp&dpr=2
+some exact https://staging.cohostcdn.org/attachment/2fc72d16-b3a6-40aa-9c5b-1c58fce84c12/2024-05-29_IMG_4531.jpg?width=337&height=253&fit=crop&auto=webp&dpr=2
+some exact https://staging.cohostcdn.org/attachment/cf4af3f6-0995-4e84-91c2-a0dffec10735/2024-06-26_IMG_4588.jpg?width=337&height=253&fit=crop&auto=webp&dpr=2
+some exact https://staging.cohostcdn.org/attachment/91bf6f90-c965-49e8-abc2-fd8f6b594b37/2024-09-11_22-25-15-468_CLIPStudioPaint_aErN1lq2bE.png
+some exact https://staging.cohostcdn.org/attachment/a1b73bcd-6e4f-4df8-b100-52d352eb7d94/2024-01-21_09-11-18-784_CLIPStudioPaint_VK5xer38OW.png
+some exact https://staging.cohostcdn.org/attachment/cf4af3f6-0995-4e84-91c2-a0dffec10735/2024-06-26_IMG_4588.jpg
+
 
 # "Https" in URL results in an "a" tag having no href
 [post:muffinlord/post/7932618-https-social-minim]
