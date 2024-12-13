@@ -233,8 +233,8 @@ some exact https://cohost.org/this-page-will-break-do-not-repost/tagged/%3f
 some exact https://cohost.org/rc/tagged/%2f
 not discoveredregex tagext:.*
 
-# Post with redirecting media URL in some meta tag
-[post:tangledmacrame/post/1307301-empty]
+# Contains post with redirecting media URL in some meta tag
+[user:tangledmacrame]
 some exact https://cohost.org/api/v1/attachments/92f06b0e-faee-429c-8cf7-f5cc3e2d79e6
 some exact https://staging.cohostcdn.org/attachment/92f06b0e-faee-429c-8cf7-f5cc3e2d79e6/BenBois-Vinyl-records.svg
 
@@ -312,13 +312,13 @@ some exact https://cohost.org/muffinlord/post/7932618-https-social-minim
 [post:Enderleaf/post/6646030-wof-adopts]
 some discovered https://cohost.org/static/edcc39b1702e4bd4b95e.svg
 some discovered https://cohost.org/static/edcc39b1702e4bd4b95e.svg?width=675&auto=webp&dpr=1
-some discovered https://cohost.org/static/8196.9488211cfaad004027c2.js
 
-# Link to a tag on a subdomain page within post body
+# Link to a tag on a subdomain page within post body; additional test of queuing static resources to #//
 [user:staff+6]
 some exact https://staff.cohost.org/tagged/financials
 some discovered usertag:staff/financials
 not exact https://cohost.org/staff/tagged/financials
+some discovered https://cohost.org/static/8196.9488211cfaad004027c2.js
 
 # New API requests Dec 11
 [user:squidcrusher+100]
