@@ -523,6 +523,7 @@ local function process_post(post, username, check, insane_url_extract)
     
     -- links from the AST - see unified-processors.ts, makeIframelyEmbeds
     local function traverse(node, only_child)
+      -- print_debug("Traversing", JSON:encode(node))
       if node["tagName"] == "a" then
         local href = node["properties"]["href"]
         if href then
@@ -539,7 +540,9 @@ local function process_post(post, username, check, insane_url_extract)
           end
         end
       elseif node["tagName"] == "img" then
-        check(node["properties"]["src"], true) -- Force as it is an embedded image, not a link
+        if node["properties"]["src"] then
+          check(node["properties"]["src"], true) -- Force as it is an embedded image, not a link
+        end
       elseif node["tagName"] == "Mention" then
         discover_item("user", node["properties"]["handle"])
       end

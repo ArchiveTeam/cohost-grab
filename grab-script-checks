@@ -327,6 +327,13 @@ some exact https://cohost.org/api/v1/trpc/projects.followingState,posts.profileP
 some exact https://cohost.org/api/v1/trpc/projects.isReaderMuting,projects.isReaderBlocking?batch=1&input=%7B%220%22%3A%7B%22projectHandle%22%3A%22squidcrusher%22%7D%2C%221%22%3A%7B%22projectHandle%22%3A%22squidcrusher%22%7D%7D
 some exact https://cohost.org/api/v1/trpc/users.displayPrefs,subscriptions.hasActiveSubscription,projects.isReaderMuting,projects.isReaderBlocking,projects.followingState,posts.profilePosts?batch=1&input=%7B%222%22%3A%7B%22projectHandle%22%3A%22squidcrusher%22%7D%2C%223%22%3A%7B%22projectHandle%22%3A%22squidcrusher%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22squidcrusher%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22squidcrusher%22%2C%22page%22%3A100%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Afalse%2C%22hideAsks%22%3Afalse%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
 
+# Img tag in ast without src
+# Also weird trick with SVGs or CSS or something, so make sure that happens properly
+[post:dekuuSkrb/post/7045364-a-href-https-ete]
+some exact https://img.comicfury.com/comics/345/48053a1721154472b78254f925704599.png
+some exact https://img.comicfury.com/comics/343/48053a1719911518b78254f1277194875.png
+
+
 
 
 [tag:video%20game%20preservation]
