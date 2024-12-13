@@ -324,6 +324,12 @@ wget.callbacks.download_child_p = function(urlpos, parent, depth, start_url_pars
   if downloaded[url] == true or addedtolist[url] == true then
     return false
   end
+  
+  -- As this is for purposes of debugging the attachment parsing (mostly), do not extract any of these
+  if current_item_type == "post" then
+    return false
+  end
+  
   -- DCP specifically is picking up garbage here that gets resolved as relative links
   local post_re = "^https?://cohost%.org/" .. USERNAME_RE .. "/post/"
   if urlpos["url"]["url"]:match(post_re) and parent["url"]:match(post_re) then
@@ -357,6 +363,7 @@ local function check_post_attachments(post, check)
   
   -- use-image-optimizer.ts (and a few others)
   local function check_srcWithDpr(src, maxWidth, aspectRatio)
+    print_debug("Checking DPR", src, maxWidth, aspectRatio)
     assert(src:match("^https://[^%.]+%.cohostcdn") or src:match("^https?://cohost%.org/static/"))
     src = src .. "?width=" .. tostring(math.floor(maxWidth))
     if aspectRatio then
@@ -381,10 +388,11 @@ local function check_post_attachments(post, check)
       local function size(att)
         return (att["width"] or 0) * (att["height"] or 0)
       end
-      local largest_att = atts:max_by(function(a, b) if size(a) > size(b) then return a else return b end end)
+      local largest_att = atts:max_by(function(a, b) if size(a) >= size(b) then return a else return b end end)
       if largest_att["kind"] == "image" then
         assert(size(largest_att) > 0)
         aspect_ratio = largest_att["width"] / largest_att["height"]
+        print_debug("Setting AR per", largest_att["width"], largest_att["height"])
       else
         assert(size(largest_att) == 0)
         aspect_ratio = 16/9;
@@ -414,7 +422,7 @@ local function check_post_attachments(post, check)
   
   local function check_attachment_group(atts, is_explicit_row)
     if is_explicit_row then
-      assert(atts:length() < 4 or atts:length() % 2 == 0) -- Haven't seen the rest in the wild
+      assert(atts:length() < 4 or atts:length() % 2 == 0 or layoutBehaviorIsV2)
     end
     -- Cannot find any examples of audio and images in the same post, except where images are all in a row - https://cohost.org/emmmmmmmm/post/7888842-empty
     -- If you do find counterexample - layouts seem to handle them specially
