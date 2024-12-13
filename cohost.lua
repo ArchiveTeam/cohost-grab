@@ -231,6 +231,8 @@ allowed = function(url, parenturl, forced)
     return false
   end
   
+  -- Disabling this section as we are getting into edge-cases in attachments and I do not want to miss stuff that DCP picks up on just because I'm trying to save a few GB
+  --[[
   -- Block potential repost media - ie stuff from the HTML of the index pages
   if (string.match(url, "^https?://staging%.cohostcdn%.org/attachment/") or string.match(url, "^https?://proxy%-staging%.cohostcdn%.org/")) and (
     string.match(parenturl, "^https?://cohost%.org/" .. USERNAME_RE .. "/?%?page=%d+$") or
@@ -245,7 +247,7 @@ allowed = function(url, parenturl, forced)
   if (string.match(url, "^https?://staging%.cohostcdn%.org/attachment/") or string.match(url, "^https?://proxy%-staging%.cohostcdn%.org/")) and pure_repost_posts[parenturl] then
     print_debug("Rejecting " .. url .. " as it comes from a pure repost")
     return false
-  end
+  end]]
   
   if current_item_type == "usertag" then
     local user, tag = string.match(url, "^https://cohost%.org/(" .. USERNAME_RE .. ")/tagged/([^%?/%#]+)")
