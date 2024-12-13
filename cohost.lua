@@ -956,18 +956,12 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
     url_is_essential = false
     print_debug("Inessential URL")
   end
-  
-  local function iframely_error_allowed(text)
-    return text:match("Iframely could not fetch the given URL") or text:match("Publisher redirected to login page")
-      or text:match("This URL is not allowed on") or text:match("This page is private")
-      or text:match("This looks like JS app with no prerender")
-  end
 
   -- Whitelist instead of blacklist status codes
   if status_code ~= 200 and status_code ~= 404
     and not (url["url"]:match("^https?://cohost%.org/[^/%?]+$") and status_code == 404)
     and not (not url_is_essential and status_code == 404)
-    and not (url["url"]:match("^https?://cdn%.iframe%.ly/") and status_code ~= 0 and iframely_error_allowed(JSON:decode(read_file(http_stat["local_file"]))["error"])) 
+    and not (url["url"]:match("^https?://cdn%.iframe%.ly/") and status_code >= 400 and status_code <= 499) 
     and not (status_code == 404 and url["url"]:match("^https://" ..USERNAME_RE .. "%.cohost%.org/")) -- Spurious extractions by DCP of relative links on subdomains. Outside subdomains these are backfed as spurious users so this only happens here. Seeing how peripheral subdomains are, I don't think this will ever indicate a problem worth our notice.
     and not (status_code == 403 and user_not_publicly_viewable)
     and not (status_code == 207 and url["url"]:match("posts%.singlePost"))

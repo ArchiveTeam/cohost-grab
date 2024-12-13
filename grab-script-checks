@@ -358,6 +358,9 @@ some exact https://staging.cohostcdn.org/attachment/4445c708-ccdb-49e7-90f8-d8ca
 some exact https://staging.cohostcdn.org/attachment/a538868e-5fbc-4884-bd6a-961d13967c23/75190007.JPG?width=225&height=149&fit=crop&auto=webp&dpr=2
 some exact https://staging.cohostcdn.org/attachment/5b7042d7-fa23-4c5f-a9e3-9a7977223998/75190008.JPG?width=225&height=149&fit=crop&auto=webp&dpr=2
 
+# Point at which I'm no longer individually excepting all the different iframely exceptions
+[post:namelessWrench/post/591267-with-two-weeks-until]
+some exact https://cdn.iframe.ly/api/iframely?url=https%3a%2f%2fwww%2eamazon%2eca%2fhz%2fwishlist%2fls%2f3703O9NWPZF5Q%3fref_%3dwl_share&key=db0b365a626eb72ce8c169cd30f99ac2&iframe=1&omit_script=1
 
 [tag:video%20game%20preservation]
 some exact https://cohost.org/rc/tagged/video%20game%20preservation
