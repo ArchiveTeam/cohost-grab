@@ -362,6 +362,10 @@ some exact https://staging.cohostcdn.org/attachment/5b7042d7-fa23-4c5f-a9e3-9a79
 [post:namelessWrench/post/591267-with-two-weeks-until]
 some exact https://cdn.iframe.ly/api/iframely?url=https%3a%2f%2fwww%2eamazon%2eca%2fhz%2fwishlist%2fls%2f3703O9NWPZF5Q%3fref_%3dwl_share&key=db0b365a626eb72ce8c169cd30f99ac2&iframe=1&omit_script=1
 
+# Bad API URL extracted because insane_url_extract resolves relative URLs to API addr
+[post:polymath/post/888924-ok-so-i-ran-the-code]
+not exact https://cohost.org/api/v1/trpc/words.json
+
 [tag:video%20game%20preservation]
 some exact https://cohost.org/rc/tagged/video%20game%20preservation
 some regex ^https?://cohost\\.org/rc/tagged/video%20game%20preservation\\?refTimestamp=17\\d+&skipPosts=40

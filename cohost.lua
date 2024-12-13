@@ -603,6 +603,13 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
       addedtolist[url] = true
     end
   end
+  
+  -- prevent insane_url_extract from resolving relative links to here
+  local function check_no_api(urla)
+    if not urla:match("^https?://cohost%.org/api/") then
+      check(urla)
+    end
+  end
 
   local function checknewurl(newurl)
     if not newurl then
@@ -613,31 +620,31 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
       return checknewurl(string.gsub(newurl, "\\[uU]002[fF]", "/"))
     end
     if string.match(newurl, "^https?:////") then
-      check((string.gsub(newurl, ":////", "://")))
+      check_no_api((string.gsub(newurl, ":////", "://")))
     elseif string.match(newurl, "^https?://") then
-      check(newurl)
+      check_no_api(newurl)
     elseif string.match(newurl, "^https?:\\/\\?/") then
-      check((string.gsub(newurl, "\\", "")))
+      check_no_api((string.gsub(newurl, "\\", "")))
     elseif string.match(newurl, "^\\/") then
       checknewurl(string.gsub(newurl, "\\", ""))
     elseif string.match(newurl, "^//") then
-      check(urlparse.absolute(url, newurl))
+      check_no_api(urlparse.absolute(url, newurl))
     elseif string.match(newurl, "^/") then
-      check(urlparse.absolute(url, newurl))
+      check_no_api(urlparse.absolute(url, newurl))
     elseif string.match(newurl, "^%.%./") then
       if string.match(url, "^https?://[^/]+/[^/]+/") then
-        check(urlparse.absolute(url, newurl))
+        check_no_api(urlparse.absolute(url, newurl))
       else
         checknewurl(string.match(newurl, "^%.%.(/.+)$"))
       end
     elseif string.match(newurl, "^%./") then
-      check(urlparse.absolute(url, newurl))
+      check_no_api(urlparse.absolute(url, newurl))
     end
   end
 
   local function checknewshorturl(newurl)
     if string.match(newurl, "^%?") then
-      check(urlparse.absolute(url, newurl))
+      check_no_api(urlparse.absolute(url, newurl))
     elseif not (string.match(newurl, "^https?:\\?/\\?//?/?")
       or string.match(newurl, "^[/\\]")
       or string.match(newurl, "^%./")
@@ -647,7 +654,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
       or string.match(newurl, "^android%-app:")
       or string.match(newurl, "^ios%-app:")
       or string.match(newurl, "^%${")) then
-      check(urlparse.absolute(url, "/" .. newurl))
+      check_no_api(urlparse.absolute(url, "/" .. newurl))
     end
   end
   
