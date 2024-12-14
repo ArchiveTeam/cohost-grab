@@ -100,6 +100,8 @@ set_new_item = function(url)
       tag_or_tagext_do_saturate = false
     elseif current_item_type == "user" then
       current_user = current_item_value:match("^([^%+]+)")
+    elseif current_item_type == "userfix1" then
+      current_user = current_item_value
     end
   end
   assert(current_item_type)
@@ -329,6 +331,11 @@ wget.callbacks.download_child_p = function(urlpos, parent, depth, start_url_pars
   
   -- As this is for purposes of debugging the attachment parsing (mostly), do not extract any of these
   if current_item_type == "post" then
+    return false
+  end
+  
+  -- As these are just to patch some API requests
+  if current_item_type == "userfix1" then
     return false
   end
   
@@ -699,7 +706,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
   end
 
   -- The check_ob() of Cohost
-  local function check_profile_posts_listing(username, page)
+  local function check_profile_posts_listing(username, page, fix_only)
     local template1 = "https://cohost.org/api/v1/trpc/posts.profilePosts?batch=1&input=%7B%220%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%2C%22page%22%3A" .. tostring(page) .. "%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3A||hr||%2C%22hideShares%22%3A||hs||%2C%22hideAsks%22%3A||ha||%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D"
     local template2 = "https://cohost.org/api/v1/trpc/login.loggedIn,users.displayPrefs,subscriptions.hasActiveSubscription,projects.isReaderMuting,projects.isReaderBlocking,projects.followingState,posts.profilePosts?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%7D%2C%226%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%2C%22page%22%3A" .. tostring(page) .. "%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3A||hr||%2C%22hideShares%22%3A||hs||%2C%22hideAsks%22%3A||ha||%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D"
     local template3 = "https://cohost.org/api/v1/trpc/users.displayPrefs,subscriptions.hasActiveSubscription,login.loggedIn,projects.followingState,posts.profilePosts,projects.isReaderMuting,projects.isReaderBlocking?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%2C%22page%22%3A" .. tostring(page) .. "%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3A||hr||%2C%22hideShares%22%3A||hs||%2C%22hideAsks%22%3A||ha||%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%7D%2C%226%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%7D%7D"
@@ -731,19 +738,23 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
       end
     end
     
-    multi_expand_and_check(template1, {"||hr||", "||hs||", "||ha||"})
-    multi_expand_and_check(template2, {"||hr||", "||hs||", "||ha||"})
-    multi_expand_and_check(template3, {"||hr||", "||hs||", "||ha||"})
-    multi_expand_and_check(template4, {"||hr||", "||hs||", "||ha||"})
-    multi_expand_and_check(template5, {"||hr||", "||hs||", "||ha||"})
-    multi_expand_and_check(template6, {"||hr||", "||hs||", "||ha||"})
+    if not fix_only then
+      multi_expand_and_check(template1, {"||hr||", "||hs||", "||ha||"})
+      multi_expand_and_check(template2, {"||hr||", "||hs||", "||ha||"})
+      multi_expand_and_check(template3, {"||hr||", "||hs||", "||ha||"})
+      multi_expand_and_check(template4, {"||hr||", "||hs||", "||ha||"})
+      multi_expand_and_check(template5, {"||hr||", "||hs||", "||ha||"})
+      multi_expand_and_check(template6, {"||hr||", "||hs||", "||ha||"})
+    end
     multi_expand_and_check(template7, {"||hr||", "||hs||", "||ha||"})
     multi_expand_and_check(template8, {"||hr||", "||hs||", "||ha||"})
     multi_expand_and_check(template9, {"||hr||", "||hs||", "||ha||"})
     multi_expand_and_check(template10, {"||hr||", "||hs||", "||ha||"})
     
-    check("https://cohost.org/" .. username .. "?page=" .. tostring(page))
-    check("https://" .. username:lower() .. ".cohost.org/?page=" .. tostring(page))
+    if not fix_only then
+      check("https://cohost.org/" .. username .. "?page=" .. tostring(page))
+      check("https://" .. username:lower() .. ".cohost.org/?page=" .. tostring(page))
+    end
   end
   
     
@@ -876,6 +887,39 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     elseif url:match("^https://cohost%.org/api/v1/trpc/posts%.singlePost%?batch") then
       local json = JSON:decode(load_html())
       process_post(json[1]["result"]["data"]["post"], username_post_type, check, insane_url_extract)
+    end
+  elseif current_item_type == "userfix1" then
+    if status_code == 200 then
+      if url:match("^https?://cohost%.org/" .. USERNAME_RE .. "/?$") then
+        -- Copied from the user handler
+        local loader_state = JSON:decode(load_html():match('<script type="application/json" id="__COHOST_LOADER_STATE__">(.-)</script>'))
+        local capitalized_handle = loader_state["project-page-view"]["project"]["handle"]
+        
+        if load_html():match('<h1 class="text%-xl font%-bold">this page is not viewable by logged%-out users</h1>')
+          or load_html():match('<h1 class="text%-xl font%-bold">this page is private</h1>') then
+          print_debug("User not publicly viewable")
+        elseif capitalized_handle ~= current_user then
+          assert(capitalized_handle:lower() == current_user:lower())
+          discover_item("userfix1", capitalized_handle)
+          print_debug("Cutting userfix1 short")
+        else
+          check_profile_posts_listing(current_user, 0, true)
+        end
+      else
+        local req_json_raw = url:match("^https://cohost%.org/api/v1/trpc/projects%.followingState,posts.profilePosts%?batch=1&input=(.+)")
+        if req_json_raw then
+          local resp_json = JSON:decode(load_html())
+          local req_json = JSON:decode(urlparse.unescape(req_json_raw))
+          local page = req_json["1"]["page"]
+      
+          local pagination = resp_json[2]["result"]["data"]["pagination"]
+          assert(pagination["morePagesForward"])
+          if #resp_json[2]["result"]["data"]["posts"] > 0 then
+            assert(pagination["nextPage"] == page + 1)
+            check_profile_posts_listing(current_user, page + 1, true)
+          end
+        end
+      end
     end
   end
   
