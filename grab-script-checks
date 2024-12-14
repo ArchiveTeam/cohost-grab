@@ -366,6 +366,12 @@ some exact https://cdn.iframe.ly/api/iframely?url=https%3a%2f%2fwww%2eamazon%2ec
 [post:polymath/post/888924-ok-so-i-ran-the-code]
 not exact https://cohost.org/api/v1/trpc/words.json
 
+# Completedness despite https://github.com/ArchiveTeam/wget-lua/issues/27
+# A full check would check that this does not affect the URL queue (e.g., if it were deduplicating by normalized form, and whatever one got in first "won");
+#  this does not happen, I have confirmed it by hand (by commenting out the section in DCP that always returns false on post:)
+[post:wave/post/2216717-wait-you-re-telling]
+some exact https://staging.cohostcdn.org/attachment/191913df-1c1a-48bd-9cc3-c03b6d8da687/lipp_guellebeha%2525CC%252588lter_zubehoer%5B1%5D.jpg?width=675&auto=webp&dpr=2
+
 [tag:video%20game%20preservation]
 some exact https://cohost.org/rc/tagged/video%20game%20preservation
 some regex ^https?://cohost\\.org/rc/tagged/video%20game%20preservation\\?refTimestamp=17\\d+&skipPosts=40
