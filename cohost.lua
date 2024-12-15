@@ -922,6 +922,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
           if #resp_json[2]["result"]["data"]["posts"] > 0 then
             assert(pagination["nextPage"] == page + 1)
             check_profile_posts_listing(current_user, page + 1, true)
+            discover_item("user", current_user .. "+" .. tostring(page + 1))
           end
         end
       end
