@@ -120,6 +120,9 @@ discover_item = function(item_type, item_name)
       current_item_value_proper_capitalization = item_name
     end
   end
+  if item_type == "user" then
+    assert(item_name:match("^" .. USERNAME_RE .. "$") or item_name:match("^" .. USERNAME_RE .. "%+%d+$"))
+  end
 
   if not discovered_items[item_type .. ":" .. item_name] then
     print_debug("Queuing for discovery " .. item_type .. ":" .. item_name)
@@ -301,7 +304,7 @@ allowed = function(url, parenturl, forced)
         return true
       end
     else
-      if user:match(USERNAME_RE) then
+      if user:match("^" .. USERNAME_RE .. "$") then
         discover_item("user", user)
       end
       return false
