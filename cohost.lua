@@ -507,9 +507,11 @@ local function process_post(post, username, check, insane_url_extract)
   
 
   for _, tag in pairs(post["tags"]) do
-    discover_item("usertag", username .. "/" .. urlparse.escape(tag))
-    -- Seemingly case is normalized site-wide before being sent in these responses, so do not need to do that for the tracker
-    discover_item("tag", urlparse.escape(tag))
+    if #tag < 1000 then
+      discover_item("usertag", username .. "/" .. urlparse.escape(tag))
+      -- Seemingly case is normalized site-wide before being sent in these responses, so do not need to do that for the tracker
+      discover_item("tag", urlparse.escape(tag))
+    end
   end
   
   assert(post["postingProject"]["handle"]:lower() == username:lower())
@@ -1089,6 +1091,7 @@ local queue_list_to = function(list, key)
     local to_send = nil
     for item, _ in pairs(list) do
       assert(string.match(item, ":")) -- Message from EggplantN, #binnedtray (search "colon"?)
+      assert(not string.match(item, "\0"))
       if to_send == nil then
         to_send = item
       else
