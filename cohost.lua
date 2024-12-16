@@ -261,8 +261,7 @@ allowed = function(url, parenturl, forced)
     end
     return user .. "/" .. tag == current_item_value
   end
-
-  
+    
 
   if string.match(url, "^https?://[^/%.]+%.cohostcdn%.org/") 
   or string.match(url, "^https?://cohost.org/api/")
@@ -549,7 +548,7 @@ local function process_post(post, username, check, insane_url_extract)
       if node["tagName"] == "a" then
         local href = node["properties"]["href"]
         if href then
-          discover_url(href)
+          check(href)
           
           if node["children"] and #node["children"] == 1 and node["children"][1]["type"] == "text"
             and node["position"] and node["children"][1]["position"] and node["children"][1]["position"]["start"]["offset"] == node["position"]["start"]["offset"]
@@ -994,7 +993,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
   if status_code >= 300 and status_code <= 399 and url["url"]:match("^https?://" .. USERNAME_RE .. "%.cohost%.org/tagged/") then
     local newloc = urlparse.absolute(url["url"], http_stat["newloc"])
     local userm, tagm = newloc:match("^https?://cohost%.org/(" .. USERNAME_RE .. ")/tagged/(.+)")
-    assert(userm == current_user)
+    assert(userm:lower() == current_user:lower())
     discover_item("usertag", userm .. "/" .. tagm)
     return wget.actions.EXIT
   end
