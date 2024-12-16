@@ -1077,7 +1077,7 @@ local send_binary = function(to_send, key)
     tries = tries + 1
   end
   if tries == 10 then
-    abortgrab = true
+    error("Failed to send binary")
   end
 end
 
@@ -1092,7 +1092,7 @@ local queue_list_to = function(list, key)
     local to_send = nil
     for item, _ in pairs(list) do
       assert(string.match(item, ":")) -- Message from EggplantN, #binnedtray (search "colon"?)
-      assert(not string.match(item, "\0"))
+      assert(not fun.iter(item):any(function(b) return b == "\0" end))
       if to_send == nil then
         to_send = item
       else
