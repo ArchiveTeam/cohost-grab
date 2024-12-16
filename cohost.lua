@@ -1023,6 +1023,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
     and not (status_code == 207 and url["url"]:match("posts%.singlePost"))
     and not (status_code == 403 and url["url"]:match("^https?://staging%.cohostcdn%.org/.*%%"))
     and not (status_code == 500 and url["url"]:match("^https?://proxy%-staging%.cohostcdn%.org/.*f:png.*"))
+    and not (status_code == 0   and err == "HOSTERR" and url["url"]:match("^https?://" .. USERNAME_RE .. "%.cohost%.org/") and current_item_type == "user" and #current_user > 63)
     then
     print("Server returned " .. http_stat.statcode .. " (" .. err .. "). Sleeping.\n")
     do_retry = true
