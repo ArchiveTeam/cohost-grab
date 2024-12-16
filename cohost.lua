@@ -133,7 +133,7 @@ end
 discover_url = function(url)
   assert(url)
   --assert(url:match(":")) disabled for this project as potential garbage is sent here
-  if url:match("\n") or not url:match(":") then -- Garbage
+  if url:match("\n") or not url:match(":") or #url > 500 or url:match("%s") then -- Garbage
     return
   end
   if not discovered_urls[url] then
