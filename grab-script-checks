@@ -303,8 +303,9 @@ some exact https://staging.cohostcdn.org/attachment/cf4af3f6-0995-4e84-91c2-a0df
 some exact https://cohost.org/api/v1/trpc/posts.singlePost?batch=1&input=%7B%220%22:%7B%22handle%22:%22muffinlord%22,%22postId%22:7932618%7D%7D # This is an URL used solely by the post: testing item
 some exact https://cohost.org/muffinlord/post/7932618-https-social-minim
 
-# No exclusion has happened for this yet! Do not understand why this happens & would like to see other cases and narrow it down rather than ignoring all 500s on media URLs, which may catch some malformed one somewhere
-# (NB DCP naturally extracts this wrong but that doesn't seem to be the root cause, same 500s happens in browsers)
+# Something DCP finds
+# See also user:selectric+72
+# Test no longer works because DCP no longer happens on ^post: but I don't care, these already take almost an hour to run and I am going to stop adding cases for minor ignores
 #[post:squidcrusher/post/1776580-empty]
 #some exact https://proxy-staging.cohostcdn.org/nOSLvsw_ljNMDjcO8HsWRGDs6hGYPw6_63z3eQ4GsdE/f:png/czM6Ly9yZWRjZW50LWRldi9hdHRhY2htZW50LzJjZWRjM2Y2LWVkOWYtNDBhYi1hNDBmLWUyMzZjOWFmYTQwYy9za3lib3guZ2lm?width=337&height=328&fit=crop&auto=webp&dpr=1
 

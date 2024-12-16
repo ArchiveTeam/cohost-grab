@@ -1023,6 +1023,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
     and not (status_code == 403 and user_not_publicly_viewable)
     and not (status_code == 207 and url["url"]:match("posts%.singlePost"))
     and not (status_code == 403 and url["url"]:match("^https?://staging%.cohostcdn%.org/.*%%"))
+    and not (status_code == 500 and url["url"]:match("^https?://proxy%-staging%.cohostcdn%.org/.*f:png.*"))
     then
     print("Server returned " .. http_stat.statcode .. " (" .. err .. "). Sleeping.\n")
     do_retry = true
@@ -1130,6 +1131,7 @@ wget.callbacks.write_to_warc = function(url, http_stat)
           and not (http_stat["statcode"] == 403 and user_not_publicly_viewable)
           and not (http_stat["statcode"] == 207 and url["url"]:match("posts%.singlePost"))
           and not (http_stat["statcode"] == 403 and url["url"]:match("^https?://staging%.cohostcdn%.org/.*%%"))
+          and not (http_stat["statcode"] == 500 and url["url"]:match("^https?://proxy%-staging%.cohostcdn%.org/.*f:png.*"))
           then
     print_debug("Not WTW")
     return false
