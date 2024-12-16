@@ -385,6 +385,10 @@ not exact https://cohost.org/api/v1/trpc/words.json
 [post:wave/post/2216717-wait-you-re-telling]
 some exact https://staging.cohostcdn.org/attachment/191913df-1c1a-48bd-9cc3-c03b6d8da687/lipp_guellebeha%2525CC%252588lter_zubehoer%5B1%5D.jpg?width=675&auto=webp&dpr=2
 
+# Empty img src in ast
+[post:MichelleDraws/post/6273624-img-src-https-64]
+some exact https://64.media.tumblr.com/89e848ad713fc36c438168762f626d97/3baea8be4265db3b-dc/s1280x1920/27235e555163818abf3e0a01f1019f7ca1dd025b.pnj
+
 [tag:video%20game%20preservation]
 some exact https://cohost.org/rc/tagged/video%20game%20preservation
 some regex ^https?://cohost\\.org/rc/tagged/video%20game%20preservation\\?refTimestamp=17\\d+&skipPosts=40

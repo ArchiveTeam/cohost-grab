@@ -562,7 +562,7 @@ local function process_post(post, username, check, insane_url_extract)
           end
         end
       elseif node["tagName"] == "img" then
-        if node["properties"]["src"] then
+        if node["properties"]["src"] and node["properties"]["src"]:match("[^%s]+") then
           check(node["properties"]["src"], true) -- Force as it is an embedded image, not a link
         end
       elseif node["tagName"] == "Mention" then
