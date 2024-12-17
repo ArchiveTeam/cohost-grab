@@ -547,7 +547,8 @@ local function process_post(post, username, check, insane_url_extract)
       -- print_debug("Traversing", JSON:encode(node))
       if node["tagName"] == "a" then
         local href = node["properties"]["href"]
-        if href then
+        if href and href:match("[^%s]+") then
+          print_debug("Checking href from ast " .. href)
           check(href)
           
           if node["children"] and #node["children"] == 1 and node["children"][1]["type"] == "text"
