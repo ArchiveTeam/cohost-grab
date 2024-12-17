@@ -270,7 +270,8 @@ allowed = function(url, parenturl, forced)
     return true
   end
   
-  if string.match(url, "^https?://" .. USERNAME_RE .. "%.cohost%.org/rc/login") or string.match(url, "^https?://cohost%.org/rc/login") then
+  if string.match(url, "^https?://" .. USERNAME_RE .. "%.cohost%.org/rc/login") or string.match(url, "^https?://cohost%.org/rc/login")
+    or string.match(url, "^https?://cohost%.org/" .. USERNAME_RE .. "/post/compose") then
     return false
   end
   
@@ -278,6 +279,7 @@ allowed = function(url, parenturl, forced)
     discover_url(url)
     return false -- We still get /static on custom subdomains
   end
+  
   
   
   local user = string.match(url, "^https?://cohost.org/([^/%?]+)") or string.match(url, "^https?://([^/%.]+)%.cohost.org/?")
