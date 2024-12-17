@@ -795,7 +795,8 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
         local capitalized_handle = loader_state["project-page-view"]["project"]["handle"]
         
         if load_html():match('<h1 class="text%-xl font%-bold">this page is not viewable by logged%-out users</h1>')
-          or load_html():match('<h1 class="text%-xl font%-bold">this page is private</h1>') then
+          or load_html():match('<h1 class="text%-xl font%-bold">this page is private</h1>')
+          or loader_state["project-page-view"]["project"]["flags"][1] == "suspended" and loader_state["project-page-view"]["canAccessPermissions"]["canRead"] ~= "allowed" then
           print_debug("User not publicly viewable")
           user_not_publicly_viewable = true
         end
