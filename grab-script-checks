@@ -402,6 +402,10 @@ some exact https://cohost.org/TheWitchPrince/rss/public.json
 [post:jackie-stackie/post/159931-til-the-lil-icons-to]
 not exact https://cohost.org/jackie-stackie/post/compose?shareOf=159907
 
+# Iframely redirects to image (which 403s but that's beyond the point)
+[post:post:hokaze/post/2677723-i-just-backed-eat-th]
+some exact https://www.kickstarter.com/favicon.ico
+
 [tag:video%20game%20preservation]
 some exact https://cohost.org/rc/tagged/video%20game%20preservation
 some regex ^https?://cohost\\.org/rc/tagged/video%20game%20preservation\\?refTimestamp=17\\d+&skipPosts=40

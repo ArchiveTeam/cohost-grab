@@ -977,7 +977,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
 
   -- Handle redirects not in download chains
   if status_code >= 300 and status_code <= 399 and (
-      (url["url"]:match("^https://iframely%.net/api/thumbnail") or url["url"]:match("^https?://cohost%.org/api/v1/attachments/") or url["url"]:match("^https://cohost%.org/rc/attachment%-redirect/"))
+      (url["url"]:match("^https://iframely%.net/api/thumbnail") or url["url"]:match("^https?://cohost%.org/api/v1/attachments/") or url["url"]:match("^https://cohost%.org/rc/attachment%-redirect/") or url["url"]:match("^https?://iframely%.net/"))
       or (redirects_level > 0 and redirects_level < 5)
     ) then
     redirects_level = redirects_level + 1
@@ -1135,10 +1135,7 @@ wget.callbacks.write_to_warc = function(url, http_stat)
   set_new_item(url["url"])
   if (string.match(url["url"], "^https?://cohost%.org/") or string.match(url["url"], "^https?://[^%.]+%.cohost%.org/") or string.match(url["url"], "^https?://[^%.]+%.cohostcdn%.org/"))
           and http_stat["statcode"] ~= 200 and http_stat["statcode"] ~= 404
-          and not (
-            (http_stat["statcode"] == 301 or http_stat["statcode"] == 302) and
-            (string.match(url["url"], "^https?://cohost%.org/api/v1/attachments/") or string.match(url["url"], "^https://cohost%.org/rc/attachment%-redirect/") or string.match(url["url"], "^https?://" .. USERNAME_RE .. "%.cohost%.org/tagged/"))
-          )
+          and not (http_stat["statcode"] >= 300 and http_stat["statcode"] <= 399)
           and not (http_stat["statcode"] == 403 and user_not_publicly_viewable)
           and not (http_stat["statcode"] == 207 and url["url"]:match("posts%.singlePost"))
           and not (http_stat["statcode"] == 403 and url["url"]:match("^https?://staging%.cohostcdn%.org/.*%%"))
