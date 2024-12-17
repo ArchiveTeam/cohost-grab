@@ -275,6 +275,11 @@ allowed = function(url, parenturl, forced)
     return false
   end
   
+  -- Weird form linked from https://cohost.org/heckscaper/post/434597-cohost-generates-rss
+  if string.match(url, "^https?://" .. USERNAME_RE .. "%.cohost%.org/rss/public$") then
+    return false
+  end
+  
   if string.match(url, "^https?://cohost.org/static/") then
     discover_url(url)
     return false -- We still get /static on custom subdomains
