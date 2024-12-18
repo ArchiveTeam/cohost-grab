@@ -403,7 +403,7 @@ some exact https://cohost.org/TheWitchPrince/rss/public.json
 not exact https://cohost.org/jackie-stackie/post/compose?shareOf=159907
 
 # Iframely redirects to image (which 403s but that's beyond the point)
-[post:post:hokaze/post/2677723-i-just-backed-eat-th]
+[post:hokaze/post/2677723-i-just-backed-eat-th]
 some exact https://www.kickstarter.com/favicon.ico
 
 [tag:video%20game%20preservation]
