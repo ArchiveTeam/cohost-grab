@@ -554,7 +554,7 @@ local function process_post(post, username, check, insane_url_extract)
       -- print_debug("Traversing", JSON:encode(node))
       if node["tagName"] == "a" then
         local href = node["properties"]["href"]
-        if href and href:match("[^%s]+") then
+        if href and href:match("^https?://") then
           print_debug("Checking href from ast " .. href)
           check(href)
           
@@ -569,7 +569,7 @@ local function process_post(post, username, check, insane_url_extract)
           end
         end
       elseif node["tagName"] == "img" then
-        if node["properties"]["src"] and node["properties"]["src"]:match("[^%s]+") then
+        if node["properties"]["src"] and node["properties"]["src"]:match("^https?://") then
           check(node["properties"]["src"], true) -- Force as it is an embedded image, not a link
         end
       elseif node["tagName"] == "Mention" then
@@ -595,6 +595,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
   downloaded[url] = true
 
   local function check(urla, force)
+    assert(urla:match("^https?://"))
     if urla:match("^https?://iframely%.net/api/thumbnail") and not urla:match("maxwidth=") then
       check(urla .. "&maxwidth=320")
       check(urla .. "&maxwidth=640")
