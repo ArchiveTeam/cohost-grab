@@ -1033,7 +1033,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
     and not (status_code == 404 and url["url"]:match("^https://" ..USERNAME_RE .. "%.cohost%.org/")) -- Spurious extractions by DCP of relative links on subdomains. Outside subdomains these are backfed as spurious users so this only happens here. Seeing how peripheral subdomains are, I don't think this will ever indicate a problem worth our notice.
     and not (status_code == 403 and user_not_publicly_viewable)
     and not (status_code == 207 and url["url"]:match("posts%.singlePost"))
-    and not ((status_code == 403 or status_code == 500) and url["url"]:match("^https?://[a-z]+%.cohostcdn%.org/"))
+    and not ((status_code == 403 or status_code == 500) and url["url"]:match("^https?://[a-z%-]+%.cohostcdn%.org/.*"))
     and not (status_code == 422 and url["url"]:match("^https?://proxy%-staging%.cohostcdn%.org/.*"))
     and not (status_code == 0   and err == "HOSTERR" and url["url"]:match("^https?://" .. USERNAME_RE .. "%.cohost%.org/") and current_item_type == "user" and #current_user > 63)
     and not (status_code == 414 and (current_item_type == "tag" or current_item_type == "tagext" or current_item_type == "usertag") and #current_item_value > 8000)
