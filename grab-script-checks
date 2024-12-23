@@ -181,16 +181,16 @@ not exact https://staging.cohostcdn.org/attachment/1f240eb2-370c-4b26-a056-f10df
 some discovered user:sixlegendsgame+1
 
 [user:sixlegendsgame+1]
-some exact https://iframely.net/api/thumbnail?url=https%3A%2F%2Fyoutu.be%2FL0AGUYXU0ag&key=db0b365a626eb72ce8c169cd30f99ac2&maxwidth=960 # Shows when you allow the Youtube URL, but before playing
+#some exact https://iframely.net/api/thumbnail?url=https%3A%2F%2Fyoutu.be%2FL0AGUYXU0ag&key=db0b365a626eb72ce8c169cd30f99ac2&maxwidth=960 # Shows when you allow the Youtube URL, but before playing
 some discovered https://youtu.be/L0AGUYXU0ag
 some discovered user:sixlegendsgame+2
 
 # Not going to get the actual Youtube content - if we want to do that, #// can handle it
 # Second embed (same post)
-some exact https://iframely.net/api/thumbnail?url=https%3A%2F%2Fstore.steampowered.com%2Fapp%2F2768130%2F&key=db0b365a626eb72ce8c169cd30f99ac2&maxwidth=960
+#some exact https://iframely.net/api/thumbnail?url=https%3A%2F%2Fstore.steampowered.com%2Fapp%2F2768130%2F&key=db0b365a626eb72ce8c169cd30f99ac2&maxwidth=960
 some discovered https://store.steampowered.com/app/2768130/
-some exact https://cdn.iframe.ly/api/iframely?url=https%3a%2f%2fstore%2esteampowered%2ecom%2fapp%2f2768130%2f&key=db0b365a626eb72ce8c169cd30f99ac2&iframe=1&omit_script=1 # This is escaped as the script does it rather than the browser
-some exact https://iframely.net/api/iframe?app=1&url=https%3A%2F%2Fstore.steampowered.com%2Fapp%2F2768130%2F&key=db0b365a626eb72ce8c169cd30f99ac2
+#some exact https://cdn.iframe.ly/api/iframely?url=https%3a%2f%2fstore%2esteampowered%2ecom%2fapp%2f2768130%2f&key=db0b365a626eb72ce8c169cd30f99ac2&iframe=1&omit_script=1 # This is escaped as the script does it rather than the browser
+#some exact https://iframely.net/api/iframe?app=1&url=https%3A%2F%2Fstore.steampowered.com%2Fapp%2F2768130%2F&key=db0b365a626eb72ce8c169cd30f99ac2
 
 # Half-height images
 some exact https://staging.cohostcdn.org/attachment/ed35dcd5-1dca-4f58-b5a5-19e790149329/davinci.png?width=337&height=197&fit=crop&auto=webp&dpr=1
@@ -264,12 +264,12 @@ some exact https://cohost.org/lazuliterecursion/rss/public.json
 not regex .*base64.*
 
 # Embed with no HTML (domain parking page)
-[user:decispark+1]
-some exact https://cdn.iframe.ly/api/iframely?url=https%3a%2f%2fabout%2elive%2espace%2fpost%2fthank%2dyou&key=db0b365a626eb72ce8c169cd30f99ac2&iframe=1&omit_script=1
+#[user:decispark+1]
+#some exact https://cdn.iframe.ly/api/iframely?url=https%3a%2f%2fabout%2elive%2espace%2fpost%2fthank%2dyou&key=db0b365a626eb72ce8c169cd30f99ac2&iframe=1&omit_script=1
 
 # Bluesky handle with same name as user but diff capitalization - gets read in as a divergence of Cohost caps
-[user:RunningDlog]
-some exact https://iframely.net/api/iframe?app=1&url=https%3A%2F%2Fbsky.app%2Fprofile%2Frunningdlog.bsky.social&key=db0b365a626eb72ce8c169cd30f99ac2
+#[user:RunningDlog]
+#some exact https://iframely.net/api/iframe?app=1&url=https%3A%2F%2Fbsky.app%2Fprofile%2Frunningdlog.bsky.social&key=db0b365a626eb72ce8c169cd30f99ac2
 
 # Miscapitalized version of private page, make sure the 403 on the rss feed is allowed even tho a lot of processing is being skipped
 [user:ribbonBlack]
@@ -373,8 +373,8 @@ some exact https://staging.cohostcdn.org/attachment/a538868e-5fbc-4884-bd6a-961d
 some exact https://staging.cohostcdn.org/attachment/5b7042d7-fa23-4c5f-a9e3-9a7977223998/75190008.JPG?width=225&height=149&fit=crop&auto=webp&dpr=2
 
 # Point at which I'm no longer individually excepting all the different iframely exceptions
-[post:namelessWrench/post/591267-with-two-weeks-until]
-some exact https://cdn.iframe.ly/api/iframely?url=https%3a%2f%2fwww%2eamazon%2eca%2fhz%2fwishlist%2fls%2f3703O9NWPZF5Q%3fref_%3dwl_share&key=db0b365a626eb72ce8c169cd30f99ac2&iframe=1&omit_script=1
+#[post:namelessWrench/post/591267-with-two-weeks-until]
+#some exact https://cdn.iframe.ly/api/iframely?url=https%3a%2f%2fwww%2eamazon%2eca%2fhz%2fwishlist%2fls%2f3703O9NWPZF5Q%3fref_%3dwl_share&key=db0b365a626eb72ce8c169cd30f99ac2&iframe=1&omit_script=1
 
 # Bad API URL extracted because insane_url_extract resolves relative URLs to API addr
 [post:polymath/post/888924-ok-so-i-ran-the-code]
@@ -403,8 +403,8 @@ some exact https://cohost.org/TheWitchPrince/rss/public.json
 not exact https://cohost.org/jackie-stackie/post/compose?shareOf=159907
 
 # Iframely redirects to image (which 403s but that's beyond the point)
-[post:hokaze/post/2677723-i-just-backed-eat-th]
-some exact https://www.kickstarter.com/favicon.ico
+#[post:hokaze/post/2677723-i-just-backed-eat-th]
+#some exact https://www.kickstarter.com/favicon.ico
 
 # Attachments 403 for a reason I cannot ascertain
 # Cancelled by someting in the JS before they complete in browser
