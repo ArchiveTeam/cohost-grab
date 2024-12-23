@@ -406,6 +406,13 @@ not exact https://cohost.org/jackie-stackie/post/compose?shareOf=159907
 [post:hokaze/post/2677723-i-just-backed-eat-th]
 some exact https://www.kickstarter.com/favicon.ico
 
+# Attachments 403 for a reason I cannot ascertain
+# Cancelled by someting in the JS before they complete in browser
+# Neverthelesse a number of these weird 403s and this has not been insightful into site structure
+[post:macthemes/post/5429694-pxd-3-0-0-by-cyber-t]
+some exact https://staging.cohostcdn.org/attachment/147d4507-1993-4072-9839-e09e75ca1fe4/11-20_pxd3_lg.jpg
+some exact https://staging.cohostcdn.org/attachment/147d4507-1993-4072-9839-e09e75ca1fe4/11-20_pxd3_lg.jpg?width=675&auto=webp&dpr=2
+
 [tag:video%20game%20preservation]
 some exact https://cohost.org/rc/tagged/video%20game%20preservation
 some regex ^https?://cohost\\.org/rc/tagged/video%20game%20preservation\\?refTimestamp=17\\d+&skipPosts=40
