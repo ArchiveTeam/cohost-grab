@@ -791,7 +791,9 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
       check(user_info["url"])
     end
     for _, cc in pairs(user_info["contactCard"]) do
-      check(cc["value"])
+      if cc["value"]:match("^https?://") then
+        check(cc["value"])
+      end
     end
   end
 
