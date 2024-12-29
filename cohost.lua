@@ -732,37 +732,24 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     local template9 = "https://cohost.org/api/v1/trpc/users.displayPrefs,subscriptions.hasActiveSubscription,projects.isReaderMuting,projects.isReaderBlocking,projects.followingState,posts.profilePosts?batch=1&input=%7B%222%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%7D%2C%223%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%2C%22page%22%3A" .. tostring(page) .. "%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3A||hr||%2C%22hideShares%22%3A||hs||%2C%22hideAsks%22%3A||ha||%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D"
     local template10 = "https://cohost.org/api/v1/trpc/projects.followingState,posts.profilePosts?batch=1&input=%7B%220%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%7D%2C%221%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%2C%22page%22%3A" .. tostring(page) .. "%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3A||hr||%2C%22hideShares%22%3A||hs||%2C%22hideAsks%22%3A||ha||%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D"
     
-    local function expand(in_table, subst_pattern)
-      local out = {}
-      for _, str in pairs(in_table) do
-        table.insert(out, (str:gsub(subst_pattern, "true")))
-        table.insert(out, (str:gsub(subst_pattern, "false")))
-      end
-      return out
-    end
-    
-    local function multi_expand_and_check(in_string, subst_patterns)
-      local urls = {in_string}
-      for _, pat in pairs(subst_patterns) do
-        urls = expand(urls, pat)
-      end
-      for _, url in pairs(urls) do
-        check(url)
-      end
+    local function check_limited_sub(template)
+      template = template:gsub("||h[ra]||", "false")
+      check((template:gsub("||hs||", "true")))
+      check((template:gsub("||hs||", "false")))
     end
     
     if not fix_only then
-      multi_expand_and_check(template1, {"||hr||", "||hs||", "||ha||"})
-      multi_expand_and_check(template2, {"||hr||", "||hs||", "||ha||"})
-      multi_expand_and_check(template3, {"||hr||", "||hs||", "||ha||"})
-      multi_expand_and_check(template4, {"||hr||", "||hs||", "||ha||"})
-      multi_expand_and_check(template5, {"||hr||", "||hs||", "||ha||"})
-      multi_expand_and_check(template6, {"||hr||", "||hs||", "||ha||"})
+      check_limited_sub(template2)
+      check_limited_sub(template1)
+      check_limited_sub(template3)
+      check_limited_sub(template4)
+      check_limited_sub(template5)
+      check_limited_sub(template6)
     end
-    multi_expand_and_check(template7, {"||hr||", "||hs||", "||ha||"})
-    multi_expand_and_check(template8, {"||hr||", "||hs||", "||ha||"})
-    multi_expand_and_check(template9, {"||hr||", "||hs||", "||ha||"})
-    multi_expand_and_check(template10, {"||hr||", "||hs||", "||ha||"})
+    check_limited_sub(template7)
+    check_limited_sub(template8)
+    check_limited_sub(template9)
+    check_limited_sub(template10)
     
     if not fix_only then
       check("https://cohost.org/" .. username .. "?page=" .. tostring(page))
