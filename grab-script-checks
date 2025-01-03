@@ -422,6 +422,11 @@ not exact https://cohost.org/jackie-stackie/post/compose?shareOf=159907
 some exact https://staging.cohostcdn.org/attachment/147d4507-1993-4072-9839-e09e75ca1fe4/11-20_pxd3_lg.jpg
 some exact https://staging.cohostcdn.org/attachment/147d4507-1993-4072-9839-e09e75ca1fe4/11-20_pxd3_lg.jpg?width=675&auto=webp&dpr=2
 
+# Images without size
+[post:MobileSuitLilah/post/501126-morrowind-so-many-n]
+some exact https://staging.cohostcdn.org/attachment/ef0cc568-28f7-4150-a799-ad47a71dedc2/ScreenShot%208.bmp?width=337&height=189&fit=crop&auto=webp&dpr=1
+some exact https://staging.cohostcdn.org/attachment/7656d6a5-1c4a-42c3-8906-9255865f3d92/ScreenShot%201.bmp?width=337&height=189&fit=crop&auto=webp&dpr=1
+
 # 500 on image
 [post:ertchin/post/7445439-news-views]
 some exact https://staging.cohostcdn.org/attachment/4b3df46d-fc10-417c-a556-7ca7cea8340b/150602_2870476_Larry_King_1.jpg

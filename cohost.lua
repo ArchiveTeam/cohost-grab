@@ -407,12 +407,11 @@ local function check_post_attachments(post, check)
         return (att["width"] or 0) * (att["height"] or 0)
       end
       local largest_att = atts:max_by(function(a, b) if size(a) >= size(b) then return a else return b end end)
-      if largest_att["kind"] == "image" then
-        assert(size(largest_att) > 0)
+      if largest_att["kind"] == "image" and size(largest_att) > 0 then
         aspect_ratio = largest_att["width"] / largest_att["height"]
         print_debug("Setting AR per", largest_att["width"], largest_att["height"])
       else
-        assert(size(largest_att) == 0)
+        assert(size(largest_att) == 0 and largest_att["width"] == nil and largest_att["height"] == nil) -- True whether non-image or image without size
         aspect_ratio = 16/9;
       end
     end
