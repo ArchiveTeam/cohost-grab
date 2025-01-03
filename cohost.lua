@@ -569,8 +569,9 @@ local function process_post(post, username, check, insane_url_extract)
           end
         end
       elseif node["tagName"] == "img" then
-        if node["properties"]["src"] and node["properties"]["src"]:match("^https?://") then
-          check(node["properties"]["src"], true) -- Force as it is an embedded image, not a link
+        local src = node["properties"]["src"]
+        if src and src:match("^https?://") then
+          check(src, not src:match("^https?://cohost%.org/")) -- Force as it is an embedded image, not a link - unless it links to Cohost proper
         end
       elseif node["tagName"] == "Mention" then
         discover_item("user", node["properties"]["handle"])
