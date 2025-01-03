@@ -407,6 +407,10 @@ some exact https://cohost.org/MisutaaAsriel/post/1354711-had-an-interesting-d
 [user:TheWitchPrince]
 some exact https://cohost.org/TheWitchPrince/rss/public.json
 
+# Continuation item somehow produced even though the user does not exist
+[user:funky-fryday+1]
+some exact https://cohost.org/funky-fryday?page=1
+
 # Post containing dump of some Cohost HTML
 [post:jackie-stackie/post/159931-til-the-lil-icons-to]
 not exact https://cohost.org/jackie-stackie/post/compose?shareOf=159907

@@ -413,6 +413,7 @@ local function check_post_attachments(post, check)
       else
         assert(size(largest_att) == 0 and largest_att["width"] == nil and largest_att["height"] == nil) -- True whether non-image or image without size
         aspect_ratio = 16/9;
+        print_debug("Defaulting AR per", JSON:encode(largest_att))
       end
     end
     local maxWidth = 675 / atts:length()
@@ -823,7 +824,9 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     -- Starting point for "+" users
     if current_item_value:match("%+") and url:match("^https://cohost%.org/" .. USERNAME_RE .. "?page=[0-9]+$") then
       local page_number = current_item_value:match("%+([0-9]+)$")
-      check_profile_posts_listing(current_user, tonumber(page_number))
+      if status_code ~= 404 then
+        check_profile_posts_listing(current_user, tonumber(page_number))
+      end
     end
     
     -- JS retrieved thru JS
@@ -1086,6 +1089,8 @@ local queue_list_to = function(list, key)
   assert(key)
   if do_debug then
     for item, _ in pairs(list) do
+      assert(string.match(item, ":"))
+      assert(not fun.iter(item):any(function(b) return b == "\0" end))
       print("Would have sent discovered item " .. item)
     end
   else
