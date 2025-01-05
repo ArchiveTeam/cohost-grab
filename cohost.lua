@@ -5,6 +5,7 @@ local urlparse = require("socket.url")
 local luasocket = require("socket") -- Used to get sub-second time
 local http = require("socket.http")
 JSON = assert(loadfile "JSON.lua")()
+CJSON = require "cjson"
 local fun = require("fun")
 
 local start_urls = JSON:decode(os.getenv("start_urls"))
@@ -102,6 +103,8 @@ set_new_item = function(url)
       current_user = current_item_value:match("^([^%+]+)")
     elseif current_item_type == "userfix1" then
       current_user = current_item_value
+    elseif current_item_type == "userfix2" then
+      current_user = current_item_value:match("^([^%+]+)")
     end
   end
   assert(current_item_type)
@@ -232,7 +235,7 @@ allowed = function(url, parenturl, forced)
   
   if cut_user_short then
     print_debug("Cutting user short!")
-    assert(current_item_type == "user")
+    assert(current_item_type == "user" or current_item_type == "userfix2")
     return false
   end
   
@@ -289,7 +292,7 @@ allowed = function(url, parenturl, forced)
   
   local user = string.match(url, "^https?://cohost.org/([^/%?]+)") or string.match(url, "^https?://([^/%.]+)%.cohost.org/?")
   if user then
-    if current_item_type == "user" and user:lower() == current_user:lower() then
+    if (current_item_type == "user" or current_item_type == "userfix2") and user:lower() == current_user:lower() then
       print_debug("Is current user")
       local tag = string.match(url, "^https://cohost%.org/" .. USERNAME_RE .. "/tagged/([^%?/%#]+)")
       if tag then
@@ -338,13 +341,23 @@ wget.callbacks.download_child_p = function(urlpos, parent, depth, start_url_pars
     return false
   end
   
+  -- Copied from allowed()
+  if string.match(url, "^https?://cohost.org/static/") then
+    discover_url(url)
+    return false -- We still get /static on custom subdomains
+  end
+  
   -- As this is for purposes of debugging the attachment parsing (mostly), do not extract any of these
   if current_item_type == "post" then
     return false
   end
   
-  -- As these are just to patch some API requests
   if current_item_type == "userfix1" then
+    return false
+  end
+  
+  -- Only thing we need to DCP here are resources from subdomains; everything else is queued explicitly to avoid duplicating media
+  if current_item_type == "userfix2" and not url:match("^https?://" .. USERNAME_RE .. "%.cohost%.org/static/") then
     return false
   end
   
@@ -462,7 +475,7 @@ local function check_post_attachments(post, check)
       end
     else
       -- AttachmentLayoutV1
-      if atts:length() % 2 ~= 0 then -- TODO check this conditional accurately represents the TS
+      if atts:length() % 2 ~= 0 then
         check_AttachmentLayoutRow(atts:take_n(3))
         atts = atts:drop_n(3)
       end
@@ -720,7 +733,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
   end
 
   -- The check_ob() of Cohost
-  local function check_profile_posts_listing(username, page, fix_only)
+  local function check_profile_posts_listing_batch(username, page, fix_only)
     local template1 = "https://cohost.org/api/v1/trpc/posts.profilePosts?batch=1&input=%7B%220%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%2C%22page%22%3A" .. tostring(page) .. "%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3A||hr||%2C%22hideShares%22%3A||hs||%2C%22hideAsks%22%3A||ha||%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D"
     local template2 = "https://cohost.org/api/v1/trpc/login.loggedIn,users.displayPrefs,subscriptions.hasActiveSubscription,projects.isReaderMuting,projects.isReaderBlocking,projects.followingState,posts.profilePosts?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%7D%2C%226%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%2C%22page%22%3A" .. tostring(page) .. "%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3A||hr||%2C%22hideShares%22%3A||hs||%2C%22hideAsks%22%3A||ha||%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D"
     local template3 = "https://cohost.org/api/v1/trpc/users.displayPrefs,subscriptions.hasActiveSubscription,login.loggedIn,projects.followingState,posts.profilePosts,projects.isReaderMuting,projects.isReaderBlocking?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%2C%22page%22%3A" .. tostring(page) .. "%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3A||hr||%2C%22hideShares%22%3A||hs||%2C%22hideAsks%22%3A||ha||%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%7D%2C%226%22%3A%7B%22projectHandle%22%3A%22" .. username .. "%22%7D%7D"
@@ -757,6 +770,56 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
       check("https://" .. username:lower() .. ".cohost.org/?page=" .. tostring(page))
     end
   end
+
+
+  local function check_profile_posts_listing_singles(username, page, fix_only)
+    local template1 = "https://cohost.org/api/v1/trpc/posts.profilePosts?input=%7B%22projectHandle%22%3A%22" .. username .. "%22%2C%22page%22%3A" .. tostring(page) .. "%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3A||hr||%2C%22hideShares%22%3A||hs||%2C%22hideAsks%22%3A||ha||%2C%22viewingOnProjectPage%22%3Atrue%7D%7D"
+        
+    local function expand(in_table, subst_pattern)
+      local out = {}
+      for _, str in pairs(in_table) do
+        table.insert(out, (str:gsub(subst_pattern, "true")))
+        table.insert(out, (str:gsub(subst_pattern, "false")))
+      end
+      return out
+    end
+    
+    local function multi_expand_and_check(in_string, subst_patterns)
+      local urls = {in_string}
+      for _, pat in pairs(subst_patterns) do
+        urls = expand(urls, pat)
+      end
+      for _, url in pairs(urls) do
+        check(url)
+      end
+    end
+    
+    multi_expand_and_check(template1, {"||hr||", "||hs||", "||ha||"})
+    
+    
+    for _, hs in pairs({"", "&hideShares=true", "&hideShares=false"}) do
+      for _, ha in pairs({"", "&hideAsks=true", "&hideAsks=false"}) do
+        for _, hr in pairs({"", "&hideReplies=true", "&hideReplies=false"}) do
+          for _, base in pairs({"https://cohost.org/" .. username .. "?page=" .. tostring(page), "https://" .. username:lower() .. ".cohost.org/?page=" .. tostring(page)}) do
+            check(base .. hs .. ha .. hr)
+            check(base .. hs .. hr .. ha)
+            check(base .. hr .. hs .. ha)
+            check(base .. hr .. ha .. hs)
+            check(base .. ha .. hs .. hr)
+            check(base .. ha .. hr .. hs)
+            end
+        end
+      end
+    end
+    
+    -- Keeping this here, high likelihood it will need to be used
+    --[[
+    check("https://cohost.org/" .. username .. "?page=" .. tostring(page) .. "&hideShares=true")
+    check("https://cohost.org/" .. username .. "?page=" .. tostring(page))
+    check("https://" .. username:lower() .. ".cohost.org/?page=" .. tostring(page) .. "&hideShares=true")
+    check("https://" .. username:lower() .. ".cohost.org/?page=" .. tostring(page))
+    ]]
+  end
   
     
   local function check_user_metadata(user_info)
@@ -784,9 +847,9 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
       end
     end
   end
-
-  if current_item_type == "user" then
-    -- Starting point for non-"+" users
+  
+  
+  if current_item_type == "user" or current_item_type == "userfix2" then
     if url:match("^https://cohost%.org/[^/%?]+$") then
       assert(not current_item_value:match("%+"))
       if status_code == 200 then
@@ -802,22 +865,60 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
         
         if capitalized_handle ~= current_user then
           assert(capitalized_handle:lower() == current_user:lower())
-          discover_item("user", capitalized_handle)
+          discover_item(current_item_type, capitalized_handle)
           print_debug("Cutting user short")
           cut_user_short = true
-        else
-          -- https://help.antisoftware.club/support/solutions/articles/62000226634-how-do-i-change-my-username-page-name-or-handle-
-          assert(current_user:match("^" .. USERNAME_RE .. "$"))
-          check("https://" .. current_user:lower() .. ".cohost.org/")
-          
-          check_user_metadata(loader_state["project-page-view"]["project"])
-          
-          if not user_not_publicly_viewable then
-            print_debug("User is publicly viewable")
-            check_profile_posts_listing(current_user, 0)
-            check("https://cohost.org/api/v1/trpc/users.displayPrefs,subscriptions.hasActiveSubscription,login.loggedIn,projects.followingState,projects.isReaderMuting,projects.isReaderBlocking?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22".. current_user .."%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22".. current_user .."%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22".. current_user .."%22%7D%7D")
-            check("https://cohost.org/api/v1/trpc/users.displayPrefs,projects.followingState,projects.isReaderMuting,projects.isReaderBlocking?batch=1&input=%7B%221%22%3A%7B%22projectHandle%22%3A%22".. current_user .."%22%7D%2C%222%22%3A%7B%22projectHandle%22%3A%22".. current_user .."%22%7D%2C%223%22%3A%7B%22projectHandle%22%3A%22".. current_user .."%22%7D%7D")
-          end
+        end
+      end
+    end
+  
+    if not current_item_value:match("%+") then
+      -- JSON retrieved thru JS
+      if url:match("^https?://" .. USERNAME_RE .. "%.cohost%.org/[^/]+$") and status_code == 200 then -- Match HTML pages on subdomain
+        local version = CJSON.decode(load_html():match('<script type="application/json" id="env%-vars">(.-)</script>'))["VERSION"]
+        check("https://" .. current_user:lower() .. ".cohost.org/rc/locales/en/client.json?" .. version)
+        check("https://" .. current_user:lower() .. ".cohost.org/rc/locales/en/common.json?" .. version)
+        check("https://" .. current_user:lower() .. ".cohost.org/rc/locales/en/server.json?" .. version)
+        check("https://" .. current_user:lower() .. ".cohost.org/static/manifest.json?" .. version)
+      end
+
+      -- JS retrieved thru JS
+      if url:match("^https?://" .. USERNAME_RE .. "%.cohost%.org/static/runtime%.[a-f0-9]+%.js$") then
+        for k, v in load_html():gmatch('%s*(%d+):%s*"(%x+)"%s*') do
+          print_debug("Setting mystery_scripts[" .. k .. "] to " .. v)
+          mystery_scripts[k] = v
+        end
+      end
+      if url:match("^https?://" .. USERNAME_RE .. "%.cohost%.org/static/client%.%x+%.js$") then
+        local a, b = load_html():match("await n%.e%((%d+)%)%.then%(n%.bind%(n,(%d+)%)%),")
+        assert(a)
+        assert(a == b)
+        print_debug("Weird static script: " .. a .. " looked up as " .. tostring(mystery_scripts[a]))
+        check("https://" .. current_user:lower() .. ".cohost.org/static/" .. a .. "." .. mystery_scripts[a] .. ".js")
+      end
+    end
+  end
+
+  if current_item_type == "user" then
+    -- Starting point for non-"+" users
+    if url:match("^https://cohost%.org/[^/%?]+$") then
+      assert(not current_item_value:match("%+"))
+      if status_code == 200 and not cut_user_short then
+        -- https://help.antisoftware.club/support/solutions/articles/62000226634-how-do-i-change-my-username-page-name-or-handle-
+        assert(current_user:match("^" .. USERNAME_RE .. "$"))
+        check("https://" .. current_user:lower() .. ".cohost.org/")
+        
+        -- Loader state extraction is duplicated
+        local loader_state = JSON:decode(load_html():match('<script type="application/json" id="__COHOST_LOADER_STATE__">(.-)</script>'))
+        local capitalized_handle = loader_state["project-page-view"]["project"]["handle"]
+        
+        check_user_metadata(loader_state["project-page-view"]["project"])
+        
+        if not user_not_publicly_viewable then
+          print_debug("User is publicly viewable")
+          check_profile_posts_listing_batch(current_user, 0)
+          check("https://cohost.org/api/v1/trpc/users.displayPrefs,subscriptions.hasActiveSubscription,login.loggedIn,projects.followingState,projects.isReaderMuting,projects.isReaderBlocking?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22".. current_user .."%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22".. current_user .."%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22".. current_user .."%22%7D%7D")
+          check("https://cohost.org/api/v1/trpc/users.displayPrefs,projects.followingState,projects.isReaderMuting,projects.isReaderBlocking?batch=1&input=%7B%221%22%3A%7B%22projectHandle%22%3A%22".. current_user .."%22%7D%2C%222%22%3A%7B%22projectHandle%22%3A%22".. current_user .."%22%7D%2C%223%22%3A%7B%22projectHandle%22%3A%22".. current_user .."%22%7D%7D")
         end
       end
     end
@@ -826,23 +927,8 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     if current_item_value:match("%+") and url:match("^https://cohost%.org/" .. USERNAME_RE .. "?page=[0-9]+$") then
       local page_number = current_item_value:match("%+([0-9]+)$")
       if status_code ~= 404 then
-        check_profile_posts_listing(current_user, tonumber(page_number))
+        check_profile_posts_listing_batch(current_user, tonumber(page_number))
       end
-    end
-    
-    -- JS retrieved thru JS
-    if url:match("^https?://" .. USERNAME_RE .. "%.cohost%.org/static/runtime%.[a-f0-9]+%.js$") then
-      for k, v in load_html():gmatch('%s*(%d+):%s*"(%x+)"%s*') do
-        print_debug("Setting mystery_scripts[" .. k .. "] to " .. v)
-        mystery_scripts[k] = v
-      end
-    end
-    if url:match("^https?://" .. USERNAME_RE .. "%.cohost%.org/static/client%.%x+%.js$") then
-      local a, b = load_html():match("await n%.e%((%d+)%)%.then%(n%.bind%(n,(%d+)%)%),")
-      assert(a)
-      assert(a == b)
-      print_debug("Weird static script: " .. a .. " looked up as " .. tostring(mystery_scripts[a]))
-      check("https://" .. current_user:lower() .. ".cohost.org/static/" .. a .. "." .. mystery_scripts[a] .. ".js")
     end
     
     local posts_json = url:match("^https://cohost%.org/api/v1/trpc/posts%.profilePosts%?batch=1&input=(.*)$")
@@ -909,7 +995,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
           discover_item("userfix1", capitalized_handle)
           print_debug("Cutting userfix1 short")
         else
-          check_profile_posts_listing(current_user, 0, true)
+          check_profile_posts_listing_batch(current_user, 0, true)
         end
       else
         local req_json_raw = url:match("^https://cohost%.org/api/v1/trpc/projects%.followingState,posts.profilePosts%?batch=1&input=(.+)")
@@ -922,10 +1008,58 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
           assert(pagination["morePagesForward"])
           if #resp_json[2]["result"]["data"]["posts"] > 0 then
             assert(pagination["nextPage"] == page + 1)
-            check_profile_posts_listing(current_user, page + 1, true)
+            check_profile_posts_listing_batch(current_user, page + 1, true)
             discover_item("user", current_user .. "+" .. tostring(page + 1))
           end
         end
+      end
+    end
+  elseif current_item_type == "userfix2" then
+    -- Starting point for non-"+" users
+    if url:match("^https://cohost%.org/[^/%?]+$") then
+      assert(not current_item_value:match("%+"))
+      if status_code == 200 and not cut_user_short then
+        assert(current_user:match("^" .. USERNAME_RE .. "$"))
+        check("https://" .. current_user:lower() .. ".cohost.org/")
+
+        if not user_not_publicly_viewable then
+          print_debug("User is publicly viewable")
+          check_profile_posts_listing_singles(current_user, 0)
+          check("https://cohost.org/api/v1/trpc/subscriptions.hasActiveSubscription?input=%7B%22projectHandle%22%3A%22" .. current_user .. "%22%7D")
+          check("https://cohost.org/api/v1/trpc/projects.followingState?input=%7B%22projectHandle%22%3A%22" .. current_user .. "%22%7D")
+          check("https://cohost.org/api/v1/trpc/projects.isReaderMuting?input=%7B%22projectHandle%22%3A%22" .. current_user .. "%22%7D")
+          check("https://cohost.org/api/v1/trpc/projects.isReaderBlocking?input=%7B%22projectHandle%22%3A%22" .. current_user .. "%22%7D")
+        end
+      end
+    end
+    
+    -- Starting point for "+" users
+    if current_item_value:match("%+") and url:match("^https://cohost%.org/" .. USERNAME_RE .. "?page=[0-9]+$") then
+      local page_number = current_item_value:match("%+([0-9]+)$")
+      if status_code ~= 404 then
+        check_profile_posts_listing_singles(current_user, tonumber(page_number))
+      end
+    end
+    
+    local posts_json = url:match("^https://cohost%.org/api/v1/trpc/posts%.profilePosts%?input=(.*)$")
+    if posts_json then
+      local req_json = CJSON.decode(urlparse.unescape(posts_json))
+      local page = req_json["page"]
+      assert(page == tonumber((current_item_value:match("%+([0-9]+)$"))) or 0)
+      local resp_json = CJSON.decode(load_html())
+      
+      local pagination = resp_json["result"]["data"]["pagination"]
+      assert(pagination["morePagesForward"]) -- Unclear what this is - I think sometimes the navigaion buttons disappear and this controls it, but can't reproduce that now
+      if #resp_json["result"]["data"]["posts"] > 0 then
+        assert(pagination["nextPage"] == page + 1)
+        discover_item("userfix2", current_user .. "+" .. tostring(page + 1))
+      end
+      
+      for _, post in pairs(resp_json["result"]["data"]["posts"]) do
+        check(post["singlePostPageUrl"], true)
+        check("https://cohost.org/api/v1/trpc/posts.singlePost?input=%7B%22handle%22%3A%22".. post["postingProject"]["handle"] .."%22%2C%22postId%22%3A".. post["postId"] .."%7D")
+        print_debug("Checking post!")
+        print_debug(CJSON.encode(post["blocks"]))
       end
     end
   end

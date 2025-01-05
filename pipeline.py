@@ -254,6 +254,16 @@ class WgetArgs(object):
                 wget_args.extend(['--warc-header', 'cohost-userfix1: ' + item_value])
                 wget_args.append(f'https://cohost.org/{item_value}')
                 set_start_url(item_type, item_value, f'https://cohost.org/{item_value}')
+            elif item_type == 'userfix2':
+                wget_args.extend(['--warc-header', 'cohost-userfix2: ' + item_value])
+                if m := re.match(r"^([0-9a-zA-Z\-]+)\+(\d+)$", item_value):
+                    url = f'https://cohost.org/{m.group(1)}?page={m.group(2)}'
+                    wget_args.append(url)
+                    set_start_url(item_type, item_value, url)
+                else:
+                    wget_args.extend(['--warc-header', 'cohost-user: ' + item_value])
+                    wget_args.append(f'https://cohost.org/{item_value}')
+                    set_start_url(item_type, item_value, f'https://cohost.org/{item_value}')
             elif item_type == "usertag":
                 user, tag = item_value.split("/", 1)
                 wget_args.extend(['--warc-header', 'cohost-user-tag: ' + item_value])
