@@ -64,6 +64,42 @@ print_debug = function(...)
 end
 print_debug("This grab script is running in debug mode. You should not see this in production.")
 
+-- CJSON wrapper that turns it into JSON.lua format
+-- Needed because in some cases I do "if [field]" and it'd take a lot of work to figure out if I'm checking for presence or checking for null
+local function json_decode(s)
+  local function convert(o)
+    if type(o) == "table" then
+      local new = {}
+      for k, v in pairs(o) do
+        if v ~= CJSON.null then
+          new[k] = convert(v)
+        end
+      end
+      return new
+    else
+      return o
+    end
+  end
+  
+  local function recursive_assert_equals(a, b)
+    assert(type(a) == type(b))
+    if type(a) == "table" then
+      for k, v in pairs(a) do
+        recursive_assert_equals(v, b[k])
+      end
+      for k, _ in pairs(b) do
+        assert(a[k] ~= nil)
+      end
+    else
+      assert(a == b, tostring(a) .. tostring(b))
+    end
+  end
+  
+  local out = convert(CJSON.decode(s))
+  --recursive_assert_equals(out, JSON:decode(s))
+  return out
+end
+
 local start_urls_inverted = {}
 for _, v in pairs(start_urls) do
   start_urls_inverted[v] = true
@@ -597,7 +633,7 @@ local function process_post(post, username, check, insane_url_extract)
     end
     
     for _, span in pairs(post["astMap"]["spans"]) do
-      traverse(JSON:decode(span["ast"]))
+      traverse(json_decode(span["ast"]))
     end
   end
 end
@@ -835,7 +871,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     if url:match("^https://cohost%.org/[^/%?]+$") then
       assert(not current_item_value:match("%+"))
       if status_code == 200 then
-        local loader_state = JSON:decode(load_html():match('<script type="application/json" id="__COHOST_LOADER_STATE__">(.-)</script>'))
+        local loader_state = json_decode(load_html():match('<script type="application/json" id="__COHOST_LOADER_STATE__">(.-)</script>'))
         local capitalized_handle = loader_state["project-page-view"]["project"]["handle"]
         
         if load_html():match('<h1 class="text%-xl font%-bold">this page is not viewable by logged%-out users</h1>')
@@ -891,7 +927,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
         check("https://" .. current_user:lower() .. ".cohost.org/")
         
         -- Loader state extraction is duplicated
-        local loader_state = JSON:decode(load_html():match('<script type="application/json" id="__COHOST_LOADER_STATE__">(.-)</script>'))
+        local loader_state = json_decode(load_html():match('<script type="application/json" id="__COHOST_LOADER_STATE__">(.-)</script>'))
         local capitalized_handle = loader_state["project-page-view"]["project"]["handle"]
         
         check_user_metadata(loader_state["project-page-view"]["project"])
@@ -915,10 +951,10 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     
     local posts_json = url:match("^https://cohost%.org/api/v1/trpc/posts%.profilePosts%?batch=1&input=(.*)$")
     if posts_json then
-      local req_json = JSON:decode(urlparse.unescape(posts_json))
+      local req_json = json_decode(urlparse.unescape(posts_json))
       local page = req_json["0"]["page"]
       assert(page == tonumber((current_item_value:match("%+([0-9]+)$"))) or 0)
-      local resp_json = JSON:decode(load_html())
+      local resp_json = json_decode(load_html())
       
       local pagination = resp_json[1]["result"]["data"]["pagination"]
       assert(pagination["morePagesForward"]) -- Unclear what this is - I think sometimes the navigaion buttons disappear and this controls it, but can't reproduce that now
@@ -959,14 +995,14 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
         check('https://cohost.org/api/v1/trpc/posts.singlePost?batch=1&input={"0":{"handle":"' .. username_base .. '","postId":' .. postid_base .. '}}')
       end
     elseif url:match("^https://cohost%.org/api/v1/trpc/posts%.singlePost%?batch") then
-      local json = JSON:decode(load_html())
+      local json = json_decode(load_html())
       process_post(json[1]["result"]["data"]["post"], username_post_type, check, insane_url_extract)
     end
   elseif current_item_type == "userfix1" then
     if status_code == 200 then
       if url:match("^https?://cohost%.org/" .. USERNAME_RE .. "/?$") then
         -- Copied from the user handler
-        local loader_state = JSON:decode(load_html():match('<script type="application/json" id="__COHOST_LOADER_STATE__">(.-)</script>'))
+        local loader_state = json_decode(load_html():match('<script type="application/json" id="__COHOST_LOADER_STATE__">(.-)</script>'))
         local capitalized_handle = loader_state["project-page-view"]["project"]["handle"]
         
         if load_html():match('<h1 class="text%-xl font%-bold">this page is not viewable by logged%-out users</h1>')
@@ -982,8 +1018,8 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
       else
         local req_json_raw = url:match("^https://cohost%.org/api/v1/trpc/projects%.followingState,posts.profilePosts%?batch=1&input=(.+)")
         if req_json_raw then
-          local resp_json = JSON:decode(load_html())
-          local req_json = JSON:decode(urlparse.unescape(req_json_raw))
+          local resp_json = json_decode(load_html())
+          local req_json = json_decode(urlparse.unescape(req_json_raw))
           local page = req_json["1"]["page"]
       
           local pagination = resp_json[2]["result"]["data"]["pagination"]
@@ -1048,7 +1084,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
   
   if current_item_type == "post" or current_item_type == "user" then
     if url:match("^https?://cdn%.iframe%.ly/api/iframely") then
-      local json = JSON:decode(load_html())
+      local json = json_decode(load_html())
       if not json["error"] and json["html"] then
         local src = json["html"]:match("iframe src=\"(https://iframely%.net/api/iframe%?.-)\"")
         check(src)
@@ -1147,7 +1183,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
     print("Server returned " .. http_stat.statcode .. " (" .. err .. "). Sleeping.\n")
     do_retry = true
   elseif string.match(url["url"], "^https?://cohost%.org/api/") and not string.match(url["url"], "^https?://cohost%.org/api/v1/attachments/") then
-      local json = JSON:decode(read_file(http_stat["local_file"]))
+      local json = json_decode(read_file(http_stat["local_file"]))
       if json["error"] then
         print("JSON error. Sleeping.\n")
         do_retry = true
@@ -1255,7 +1291,7 @@ wget.callbacks.write_to_warc = function(url, http_stat)
     print_debug("Not WTW")
     return false
   elseif string.match(url["url"], "^https?://cohost%.org/api/") and not string.match(url["url"], "^https?://cohost%.org/api/v1/attachments/") then
-    local json = JSON:decode(read_file(http_stat["local_file"]))
+    local json = json_decode(read_file(http_stat["local_file"]))
     if not json then
       error("Failed to parse as JSON the response from " .. url["url"] .. " : " .. read_file(http_stat["local_file"]))
     end
