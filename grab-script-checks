@@ -367,6 +367,10 @@ some exact https://sanqui.cohost.org/rc/locales/en/client.json?43ab8945
 some exact https://sanqui.cohost.org/rc/locales/en/common.json?43ab8945
 some exact https://sanqui.cohost.org/rc/locales/en/server.json?43ab8945
 some exact https://sanqui.cohost.org/static/manifest.json?43ab8945
+some exact https://cohost.org/sanqui?page=0
+some exact https://cohost.org/sanqui?page=0&hideShares=true
+some exact https://sanqui.cohost.org/?page=0
+some exact https://sanqui.cohost.org/?page=0&hideShares=true
 
 
 [userfix2:Foxhack+1]
@@ -379,12 +383,13 @@ some exact https://cohost.org/Foxhack?page=1&hideShares=true
 some discovered userfix2:Foxhack+2
 some exact https://cohost.org/Foxhack?page=1
 some exact https://cohost.org/Foxhack?page=1&hideShares=true
+some exact https://foxhack.cohost.org/?page=1
+some exact https://foxhack.cohost.org/?page=1&hideShares=true
 
-# For now let's get these things, maybe it's faster now
-some exact https://cohost.org/Foxhack?page=1&hideShares=true&hideAsks=true
-some exact https://cohost.org/Foxhack?page=1&hideAsks=true&hideShares=false&hideReplies=true
+not exact https://cohost.org/Foxhack?page=1&hideShares=true&hideAsks=true
+not exact https://cohost.org/Foxhack?page=1&hideAsks=true&hideShares=false&hideReplies=true
 some exact https://cohost.org/api/v1/trpc/posts.profilePosts?input=%7B%22projectHandle%22%3A%22Foxhack%22%2C%22page%22%3A1%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Atrue%2C%22hideShares%22%3Atrue%2C%22hideAsks%22%3Atrue%2C%22viewingOnProjectPage%22%3Atrue%7D%7D
-some exact https://cohost.org/Foxhack?page=1&hideShares=true&hideAsks=true&hideReplies=true
+not exact https://cohost.org/Foxhack?page=1&hideShares=true&hideAsks=true&hideReplies=true
 some exact https://cohost.org/api/v1/trpc/posts.profilePosts?input=%7B%22projectHandle%22%3A%22Foxhack%22%2C%22page%22%3A1%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Atrue%2C%22hideAsks%22%3Atrue%2C%22viewingOnProjectPage%22%3Atrue%7D%7D
 
 

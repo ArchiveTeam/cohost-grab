@@ -796,29 +796,11 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     
     multi_expand_and_check(template1, {"||hr||", "||hs||", "||ha||"})
     
-    
-    for _, hs in pairs({"", "&hideShares=true", "&hideShares=false"}) do
-      for _, ha in pairs({"", "&hideAsks=true", "&hideAsks=false"}) do
-        for _, hr in pairs({"", "&hideReplies=true", "&hideReplies=false"}) do
-          for _, base in pairs({"https://cohost.org/" .. username .. "?page=" .. tostring(page), "https://" .. username:lower() .. ".cohost.org/?page=" .. tostring(page)}) do
-            check(base .. hs .. ha .. hr)
-            check(base .. hs .. hr .. ha)
-            check(base .. hr .. hs .. ha)
-            check(base .. hr .. ha .. hs)
-            check(base .. ha .. hs .. hr)
-            check(base .. ha .. hr .. hs)
-            end
-        end
-      end
-    end
-    
-    -- Keeping this here, high likelihood it will need to be used
-    --[[
+
     check("https://cohost.org/" .. username .. "?page=" .. tostring(page) .. "&hideShares=true")
     check("https://cohost.org/" .. username .. "?page=" .. tostring(page))
     check("https://" .. username:lower() .. ".cohost.org/?page=" .. tostring(page) .. "&hideShares=true")
     check("https://" .. username:lower() .. ".cohost.org/?page=" .. tostring(page))
-    ]]
   end
   
     
