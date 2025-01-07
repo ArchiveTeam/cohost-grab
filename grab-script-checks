@@ -525,3 +525,27 @@ not discoveredregex tagext:.*
 # Single quote and explamation mark get pre-urldecoded by wget
 [tag:We%27ll%20see%20if%20that%20helps%21%21]
 some regex ^https?://cohost\\.org/.*
+
+
+
+
+# To the Lua script these are "url" items
+[https://httpstat.us/302]
+some exact https://httpstat.us/302
+# Don't care whether it gets the redirect
+
+[https://cohost.org/anti-software-software-club/post/90637-welcome-aidan]
+some exact https://cohost.org/anti-software-software-club/post/90637-welcome-aidan
+not exact https://staging.cohostcdn.org/avatar/58-158215a3-d074-4de3-835d-6f89a2492ad6-profile.jpg?dpr=2&width=80&height=80&fit=cover&auto=webp # Don't get resources, just get the bare URLs
+
+# URL that 500s; at the time of writing not handled yet but that's irrelevant to how an URL item should treat it
+[https://cohost.org/SB2749]
+some exact https://cohost.org/SB2749
+successful
+
+# 3rd party sites should not fail on Cohost timeouts/too-fast
+[https://httpstat.us/429]
+some exact https://httpstat.us/429
+
+[https://httpstat.us/503]
+some exact https://httpstat.us/503

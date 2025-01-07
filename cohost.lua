@@ -388,7 +388,7 @@ wget.callbacks.download_child_p = function(urlpos, parent, depth, start_url_pars
     return false
   end
   
-  if current_item_type == "userfix1" then
+  if current_item_type == "userfix1" or current_item_type == "url" then
     return false
   end
   
@@ -1179,6 +1179,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
     and not (status_code == 422 and url["url"]:match("^https?://proxy%-staging%.cohostcdn%.org/.*"))
     and not (status_code == 0   and err == "HOSTERR" and url["url"]:match("^https?://" .. USERNAME_RE .. "%.cohost%.org/") and current_item_type == "user" and #current_user > 63)
     and not (status_code == 414 and (current_item_type == "tag" or current_item_type == "tagext" or current_item_type == "usertag") and #current_item_value > 8000)
+    and not (current_item_type == "url" and not ((status_code == 503 or status_code == 429) and url_is_essential))
     then
     print("Server returned " .. http_stat.statcode .. " (" .. err .. "). Sleeping.\n")
     do_retry = true
@@ -1287,6 +1288,7 @@ wget.callbacks.write_to_warc = function(url, http_stat)
           and not ((http_stat["statcode"] == 403 or http_stat["statcode"] == 500) and url["url"]:match("^https?://[a-z%-]+%.cohostcdn%.org/.*"))
           and not (http_stat["statcode"] == 422 and url["url"]:match("^https?://proxy%-staging%.cohostcdn%.org/.*"))
           and not (http_stat["statcode"] == 414 and (current_item_type == "tag" or current_item_type == "tagext" or current_item_type == "usertag") and #current_item_value > 8000)
+          and not (current_item_type == "url" and http_stat["statcode"] ~= 503 and http_stat["statcode"] ~= 429)
           then
     print_debug("Not WTW")
     return false

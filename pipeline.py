@@ -58,7 +58,7 @@ if not WGET_AT:
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = '20250106.03'
+VERSION = '20250107.01'
 USER_AGENT = 'Archiveteam (https://wiki.archiveteam.org/; communicate at https://webirc.hackint.org/#ircs://irc.hackint.org/#archiveteam)'
 TRACKER_ID = 'cohost'
 TRACKER_HOST = 'legacy-api.arpa.li'
@@ -280,6 +280,12 @@ class WgetArgs(object):
                 wget_args.append(url)
                 
                 set_start_url(item_type, item_value, url)
+            elif item_type == "http" or item_type == "https":
+                # Tracker item name is "http" and "https" to take care of some raw URLs that somehow ended up queued there as items before this type was added
+                # But the name used by the script is "url:[value]"
+                wget_args.extend(['--warc-header', 'cohost-url: ' + item_name])
+                wget_args.append(item_name)
+                set_start_url("url", item_name, item_name)
             elif item_type == "post":
                 # This item type is only used for testing; does not get everything to play back a post but causes a substantial portion of the logic to run
                 wget_args.extend(['--warc-header', 'cohost-post: ' + item_value])
