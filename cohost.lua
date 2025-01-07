@@ -1185,7 +1185,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
     do_retry = true
   elseif string.match(url["url"], "^https?://cohost%.org/api/") and not string.match(url["url"], "^https?://cohost%.org/api/v1/attachments/") then
       local json = json_decode(read_file(http_stat["local_file"]))
-      if json["error"] then
+      if json["error"] and not json["error"]["status"] == "NOT FOUND" then
         print("JSON error. Sleeping.\n")
         do_retry = true
     end
@@ -1297,7 +1297,7 @@ wget.callbacks.write_to_warc = function(url, http_stat)
     if not json then
       error("Failed to parse as JSON the response from " .. url["url"] .. " : " .. read_file(http_stat["local_file"]))
     end
-    if json["error"] then
+    if json["error"] and not json["error"]["status"] == "NOT FOUND" then
       print_debug("Not WTW")
       return false
     end

@@ -473,6 +473,10 @@ some exact https://cohost.org/TheWitchPrince/rss/public.json
 [user:funky-fryday+1]
 some exact https://cohost.org/funky-fryday?page=1
 
+# 404ing post listed on page
+[userfix2:Keeble+23]
+some exact https://cohost.org/api/v1/trpc/posts.singlePost?input=%7B%22handle%22%3A%22Keeble%22%2C%22postId%22%3A1529274%7D
+
 # Post containing dump of some Cohost HTML
 [post:jackie-stackie/post/159931-til-the-lil-icons-to]
 not exact https://cohost.org/jackie-stackie/post/compose?shareOf=159907
