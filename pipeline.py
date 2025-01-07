@@ -337,7 +337,8 @@ pipeline = Pipeline(
             'item_dir': ItemValue('item_dir'),
             'warc_file_base': ItemValue('warc_file_base'),
             'start_urls': ItemValue('start_urls'),
-            'item_names_table': ItemValue('item_names_table')
+            'item_names_table': ItemValue('item_names_table'),
+            'LANG': 'en_US.UTF-8'
         }
     ),
     PrepareStatsForTracker(
