@@ -71,21 +71,6 @@ some discovered https://sanqui.net/
 # User only mentioned with "@" in profile
 some discovered user:tcrf
 
-# Subdomain
-some exact https://sanqui.cohost.org/
-some exact https://sanqui.cohost.org/?page=0
-# some exact https://sanqui.cohost.org/?page=1&hideReplies=true&hideAsks=true Disabled because there are *none* of these, subdomain or not, in cdx
-some exact https://sanqui.cohost.org/static/client.9de493d3ba74abc6eacb.css
-some regex ^https://sanqui\.cohost\.org/static/runtime\.[a-f0-9]+\.js$
-some regex ^https://sanqui\.cohost\.org/static/client\.[a-f0-9]+\.js$
-some exact https://sanqui.cohost.org/static/8196.9488211cfaad004027c2.js
-some exact https://sanqui.cohost.org/static/client-preact-components-pages-project-page-view.63cef228fcf81849ae53.js
-some exact https://sanqui.cohost.org/static/7c05f33b4fe5f8132439.woff2
-some exact https://sanqui.cohost.org/static/b07ad0e0d01ba4d56c1a.woff2
-some exact https://sanqui.cohost.org/static/1d032f03e8c1619c1840.woff
-some exact https://sanqui.cohost.org/static/4860.328a8b56d19750b075f1.js
-some exact https://sanqui.cohost.org/static/160a2de1e18bbfbce0d6.woff2
-# TODO not suer if I got all of these
 
 # And why not
 some exact https://cohost.org/sanqui/rss/public.json
@@ -97,7 +82,7 @@ some exact https://staging.cohostcdn.org/attachment/4a953630-0e22-401a-aecc-ef50
 some discovered user:sanqui+1
 
 [user:sanqui+1]
-some exact https://sanqui.cohost.org/?page=1
+some not regex ^https://sanqui\.cohost.org/.*
 
 some exact https://cohost.org/api/v1/trpc/posts.profilePosts?batch=1&input=%7B%220%22%3A%7B%22projectHandle%22%3A%22sanqui%22%2C%22page%22%3A1%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Atrue%2C%22hideAsks%22%3Afalse%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
 some exact https://cohost.org/api/v1/trpc/posts.profilePosts?batch=1&input=%7B%220%22%3A%7B%22projectHandle%22%3A%22sanqui%22%2C%22page%22%3A1%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Afalse%2C%22hideAsks%22%3Afalse%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
@@ -148,8 +133,8 @@ some discovered tag:video%20game%20ad
 [user:Foxhack+17]
 some exact https://cohost.org/Foxhack?page=17
 some exact https://cohost.org/Foxhack/post/658013-so-how-does-this-pla
-some exact https://foxhack.cohost.org/?page=17
 some discovered user:Foxhack+18
+some not regex ^https://foxhack\.cohost.org/.*
 
 [user:Foxhack+18]
 some exact https://cohost.org/Foxhack?page=18
@@ -165,12 +150,11 @@ not exact https://staging.cohostcdn.org/attachment/1dcb6916-b7de-4f2e-8702-1c8d5
 # User with no posts
 [user:digitaldragons]
 some exact https://cohost.org/digitaldragons
-some exact https://digitaldragons.cohost.org/
 some exact https://cohost.org/digitaldragons?page=0
-some exact https://digitaldragons.cohost.org/?page=0
 not exact https://cohost.org/digitaldragons?page=1 # Especially as these go on forever
 some exact https://cohost.org/api/v1/trpc/login.loggedIn,users.displayPrefs,subscriptions.hasActiveSubscription,projects.isReaderMuting,projects.isReaderBlocking,projects.followingState,posts.profilePosts?batch=1&input=%7B%223%22%3A%7B%22projectHandle%22%3A%22digitaldragons%22%7D%2C%224%22%3A%7B%22projectHandle%22%3A%22digitaldragons%22%7D%2C%225%22%3A%7B%22projectHandle%22%3A%22digitaldragons%22%7D%2C%226%22%3A%7B%22projectHandle%22%3A%22digitaldragons%22%2C%22page%22%3A0%2C%22options%22%3A%7B%22pinnedPostsAtTop%22%3Atrue%2C%22hideReplies%22%3Afalse%2C%22hideShares%22%3Afalse%2C%22hideAsks%22%3Afalse%2C%22viewingOnProjectPage%22%3Atrue%7D%7D%7D
 not discovered user:digitaldragons+1
+not exact https://digitaldragons.cohost.org/static/4860.328a8b56d19750b075f1.js
 
 # User with embeds
 [user:sixlegendsgame]
@@ -372,6 +356,21 @@ some exact https://cohost.org/sanqui?page=0&hideShares=true
 some exact https://sanqui.cohost.org/?page=0
 some exact https://sanqui.cohost.org/?page=0&hideShares=true
 
+# Subdomain
+some exact https://sanqui.cohost.org/
+some exact https://sanqui.cohost.org/?page=0
+# some exact https://sanqui.cohost.org/?page=1&hideReplies=true&hideAsks=true Disabled because there are *none* of these, subdomain or not, in cdx
+some exact https://sanqui.cohost.org/static/client.9de493d3ba74abc6eacb.css
+some regex ^https://sanqui\.cohost\.org/static/runtime\.[a-f0-9]+\.js$
+some regex ^https://sanqui\.cohost\.org/static/client\.[a-f0-9]+\.js$
+some exact https://sanqui.cohost.org/static/8196.9488211cfaad004027c2.js
+some exact https://sanqui.cohost.org/static/client-preact-components-pages-project-page-view.63cef228fcf81849ae53.js
+some exact https://sanqui.cohost.org/static/7c05f33b4fe5f8132439.woff2
+some exact https://sanqui.cohost.org/static/b07ad0e0d01ba4d56c1a.woff2
+some exact https://sanqui.cohost.org/static/1d032f03e8c1619c1840.woff
+some exact https://sanqui.cohost.org/static/4860.328a8b56d19750b075f1.js
+some exact https://sanqui.cohost.org/static/160a2de1e18bbfbce0d6.woff2
+
 
 [userfix2:Foxhack+1]
 some exact https://cohost.org/Foxhack/post/7525623-wondering-if-opening
@@ -500,6 +499,12 @@ some exact https://staging.cohostcdn.org/attachment/7656d6a5-1c4a-42c3-8906-9255
 # 500 on image
 [post:ertchin/post/7445439-news-views]
 some exact https://staging.cohostcdn.org/attachment/4b3df46d-fc10-417c-a556-7ca7cea8340b/150602_2870476_Larry_King_1.jpg
+
+# Do not get subdomain resources on users with few posts
+[userfix2:telefang]
+some exact https://cohost.org/telefang
+not exact https://telefang.cohost.org/static/4860.328a8b56d19750b075f1.js
+not exact https://telefang.cohost.org/static/client-preact-components-pages-project-page-view.63cef228fcf81849ae53.js
 
 [tag:video%20game%20preservation]
 some exact https://cohost.org/rc/tagged/video%20game%20preservation

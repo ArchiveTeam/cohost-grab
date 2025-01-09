@@ -42,6 +42,7 @@ local tag_or_tagext_timestamp = nil
 local tag_or_tagext_start_offset = nil -- Inclusive
 local tag_or_tagext_end_offset = nil -- Exclusive
 local tag_or_tagext_do_saturate = nil
+local get_subdomain_resources = nil
 
 
 local iframely_key = "db0b365a626eb72ce8c169cd30f99ac2"
@@ -123,6 +124,7 @@ set_new_item = function(url)
     pure_repost_posts = {}
     cut_user_short = false
     user_not_publicly_viewable = false
+    get_subdomain_resources = false
     
     if current_item_type == "tag" then
       tag_or_tagext_tag_content = current_item_value
@@ -338,7 +340,7 @@ allowed = function(url, parenturl, forced)
       if string.match(url, "^https?://" .. USERNAME_RE .. "%.cohost%.org/static/") then
         -- Only need to get these once
         print_debug("Considering static")
-        return not current_item_value:match("%+")
+        return get_subdomain_resources
       end
       local page = string.match(url, "^https?://cohost.org/[^/%?]+/?%?page=([0-9]+)$") or string.match(url, "^https?://[^/%.]+%.cohost.org/?%?page=([0-9]+)$")
         or ((string.match(url, "^https?://cohost.org/([^/%?]+)$") or string.match(url, "^https?://([^/%.]+)%.cohost.org/?$")) and "0")
@@ -803,7 +805,6 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     
     if not fix_only then
       check("https://cohost.org/" .. username .. "?page=" .. tostring(page))
-      check("https://" .. username:lower() .. ".cohost.org/?page=" .. tostring(page))
     end
   end
 
@@ -889,32 +890,6 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
         end
       end
     end
-  
-    if not current_item_value:match("%+") then
-      -- JSON retrieved thru JS
-      if url:match("^https?://" .. USERNAME_RE .. "%.cohost%.org/[^/]+$") and status_code == 200 then -- Match HTML pages on subdomain
-        local version = CJSON.decode(load_html():match('<script type="application/json" id="env%-vars">(.-)</script>'))["VERSION"]
-        check("https://" .. current_user:lower() .. ".cohost.org/rc/locales/en/client.json?" .. version)
-        check("https://" .. current_user:lower() .. ".cohost.org/rc/locales/en/common.json?" .. version)
-        check("https://" .. current_user:lower() .. ".cohost.org/rc/locales/en/server.json?" .. version)
-        check("https://" .. current_user:lower() .. ".cohost.org/static/manifest.json?" .. version)
-      end
-
-      -- JS retrieved thru JS
-      if url:match("^https?://" .. USERNAME_RE .. "%.cohost%.org/static/runtime%.[a-f0-9]+%.js$") then
-        for k, v in load_html():gmatch('%s*(%d+):%s*"(%x+)"%s*') do
-          print_debug("Setting mystery_scripts[" .. k .. "] to " .. v)
-          mystery_scripts[k] = v
-        end
-      end
-      if url:match("^https?://" .. USERNAME_RE .. "%.cohost%.org/static/client%.%x+%.js$") then
-        local a, b = load_html():match("await n%.e%((%d+)%)%.then%(n%.bind%(n,(%d+)%)%),")
-        assert(a)
-        assert(a == b)
-        print_debug("Weird static script: " .. a .. " looked up as " .. tostring(mystery_scripts[a]))
-        check("https://" .. current_user:lower() .. ".cohost.org/static/" .. a .. "." .. mystery_scripts[a] .. ".js")
-      end
-    end
   end
 
   if current_item_type == "user" then
@@ -962,7 +937,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
         assert(pagination["nextPage"] == page + 1)
         discover_item("user", current_user .. "+" .. tostring(page + 1))
       end
-      
+
       for _, post in pairs(resp_json[1]["result"]["data"]["posts"]) do
         process_post(post, current_user, check, insane_url_extract)
       end
@@ -1051,6 +1026,36 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
       end
     end
     
+    if not current_item_value:match("%+") then
+      -- JSON retrieved thru JS
+      if url:match("^https?://" .. USERNAME_RE .. "%.cohost%.org/[^/]+$") and status_code == 200 then -- Match HTML pages on subdomain
+        -- Count the number of posts. If less than 4 don't queue the stuff
+        if fun.iter(load_html():gmatch('<div data%-view="post%-preview" data%-testid="post%-%d+" data%-postid="%d+"')):length() > 3 then
+          local version = CJSON.decode(load_html():match('<script type="application/json" id="env%-vars">(.-)</script>'))["VERSION"]
+          check("https://" .. current_user:lower() .. ".cohost.org/rc/locales/en/client.json?" .. version)
+          check("https://" .. current_user:lower() .. ".cohost.org/rc/locales/en/common.json?" .. version)
+          check("https://" .. current_user:lower() .. ".cohost.org/rc/locales/en/server.json?" .. version)
+          check("https://" .. current_user:lower() .. ".cohost.org/static/manifest.json?" .. version)
+          get_subdomain_resources = true
+        end
+      end
+
+      -- JS retrieved thru JS
+      if url:match("^https?://" .. USERNAME_RE .. "%.cohost%.org/static/runtime%.[a-f0-9]+%.js$") then
+        for k, v in load_html():gmatch('%s*(%d+):%s*"(%x+)"%s*') do
+          print_debug("Setting mystery_scripts[" .. k .. "] to " .. v)
+          mystery_scripts[k] = v
+        end
+      end
+      if url:match("^https?://" .. USERNAME_RE .. "%.cohost%.org/static/client%.%x+%.js$") then
+        local a, b = load_html():match("await n%.e%((%d+)%)%.then%(n%.bind%(n,(%d+)%)%),")
+        assert(a)
+        assert(a == b)
+        print_debug("Weird static script: " .. a .. " looked up as " .. tostring(mystery_scripts[a]))
+        check("https://" .. current_user:lower() .. ".cohost.org/static/" .. a .. "." .. mystery_scripts[a] .. ".js")
+      end
+    end
+    
     -- Starting point for "+" users
     if current_item_value:match("%+") and url:match("^https://cohost%.org/" .. USERNAME_RE .. "?page=[0-9]+$") then
       local page_number = current_item_value:match("%+([0-9]+)$")
@@ -1071,6 +1076,10 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
       if #resp_json["result"]["data"]["posts"] > 0 then
         assert(pagination["nextPage"] == page + 1)
         discover_item("userfix2", current_user .. "+" .. tostring(page + 1))
+      end
+      
+      if (not current_item_value:match("%+")) and (not get_subdomain_resources) then
+        assert(#resp_json["result"]["data"]["posts"] <= 3)
       end
       
       for _, post in pairs(resp_json["result"]["data"]["posts"]) do
