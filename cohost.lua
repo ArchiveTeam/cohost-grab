@@ -28,7 +28,6 @@ local next_start_url_index = 1
 local mystery_scripts = {}
 local current_user = nil
 
-local current_item_value_proper_capitalization = nil
 local do_retry = false -- read by get_urls
 local redirects_level = 0
 local username_post_type = nil
@@ -108,7 +107,6 @@ end
 
 -- Function to be called whenever an item's download ends.
 end_of_item = function()
-	current_item_value_proper_capitalization = nil
 end
 
 set_new_item = function(url)
@@ -153,14 +151,6 @@ discover_item = function(item_type, item_name)
   print_debug("Trying to discover " .. item_type .. ":" .. item_name)
   assert(item_type)
   assert(item_name)
-  -- Assert that if the page (or something in the script, erroneously) is giving us an alternate form with different capitalization, there is only one form
-  if item_type == "user" and current_item_type == "user" and string.lower(item_name) == string.lower(current_item_value) and item_name ~= current_item_value then
-    if current_item_value_proper_capitalization ~= nil then
-      assert(current_item_value_proper_capitalization == item_name)
-    else
-      current_item_value_proper_capitalization = item_name
-    end
-  end
   if item_type == "user" then
     assert(item_name:match("^" .. USERNAME_RE .. "$") or item_name:match("^" .. USERNAME_RE .. "%+%d+$"))
   end
