@@ -9,9 +9,7 @@ CJSON = require "cjson"
 local fun = require("fun")
 
 local start_urls = JSON:decode(os.getenv("start_urls"))
-print("start_urls is", os.getenv("start_urls"))
 local items_table = JSON:decode(os.getenv("item_names_table"))
-print("item_names_table is", os.getenv("item_names_table"))
 local item_dir = os.getenv("item_dir")
 local warc_file_base = os.getenv("warc_file_base")
 
@@ -112,11 +110,6 @@ end_of_item = function()
 end
 
 set_new_item = function(url)
-  local s = ""
-  for c=1,#url,1 do
-    s = s .. string.format('%02X',  url:byte(c))
-  end
-  print("Setting new item on", s)
   -- If next exists, and it matches the current
   if start_urls[next_start_url_index] and (urlparse.unescape(url) == urlparse.unescape(start_urls[next_start_url_index])) then
     end_of_item()
