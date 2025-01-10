@@ -1192,6 +1192,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
     and not (status_code == 0   and err == "HOSTERR" and url["url"]:match("^https?://" .. USERNAME_RE .. "%.cohost%.org/") and (current_item_type == "user" or current_item_type == "userfix2") and #current_user > 63)
     and not (status_code == 414 and (current_item_type == "tag" or current_item_type == "tagext" or current_item_type == "usertag") and #current_item_value > 8000)
     and not (status_code == 500 and url["url"]:match("/tagged/.*%%"))
+    and not (status_code == 0 and url["url"]:match("^https?://no%-reply%.cohost%.org/"))
     and not (current_item_type == "url" and not ((status_code == 503 or status_code == 429) and url_is_essential))
     and not (current_user == "www" or current_user == "static" or current_user == "SB2749")
     then
