@@ -1173,8 +1173,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
   do_retry = false
   local maxtries = 8
   local url_is_essential = true
-  if not (url["url"]:match("^https?://cohost%.org/") or url["url"]:match("^https?://[^%.]+%.cohost%.org/") or url["url"]:match("^https?://[^%.]+%.cohostcdn%.org/")
-        or url["url"]:match("^https?://cdn%.iframe%.ly/") or url["url"]:match("^https://iframely%.net/api/")) then
+  if not (url["url"]:match("^https?://cohost%.org/") or url["url"]:match("^https?://[^%.]+%.cohost%.org/") or url["url"]:match("^https?://[^%.]+%.cohostcdn%.org/")) then
     maxtries = 3
     url_is_essential = false
     print_debug("Inessential URL")
