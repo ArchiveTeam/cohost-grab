@@ -1180,7 +1180,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
   end
 
   -- Whitelist instead of blacklist status codes
-  if status_code ~= 200 and status_code ~= 404
+  if status_code ~= 200 and status_code ~= 404 and status_code ~= 503 and status_code ~= 502
     and not (url["url"]:match("^https?://cohost%.org/[^/%?]+$") and status_code == 404)
     and not (not url_is_essential and status_code == 404)
     and not (url["url"]:match("^https?://cdn%.iframe%.ly/") and status_code >= 400 and status_code <= 499) 
@@ -1191,7 +1191,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
     and not (status_code == 422 and url["url"]:match("^https?://proxy%-staging%.cohostcdn%.org/.*"))
     and not (status_code == 0   and err == "HOSTERR" and url["url"]:match("^https?://" .. USERNAME_RE .. "%.cohost%.org/") and (current_item_type == "user" or current_item_type == "userfix2") and #current_user > 63)
     and not (status_code == 414 and (current_item_type == "tag" or current_item_type == "tagext" or current_item_type == "usertag") and #current_item_value > 8000)
-    and not (status_code == 500 and (current_item_type == "tag" or current_item_type == "usertag") and current_item_value:match("%%"))
+    and not (status_code == 500 and url["url"]:match("/tagged/.*%%"))
     and not (current_item_type == "url" and not ((status_code == 503 or status_code == 429) and url_is_essential))
     then
     print("Server returned " .. http_stat.statcode .. " (" .. err .. "). Sleeping.\n")
@@ -1294,14 +1294,14 @@ end
 wget.callbacks.write_to_warc = function(url, http_stat)
   set_new_item(url["url"])
   if (string.match(url["url"], "^https?://cohost%.org/") or string.match(url["url"], "^https?://[^%.]+%.cohost%.org/") or string.match(url["url"], "^https?://[^%.]+%.cohostcdn%.org/"))
-          and http_stat["statcode"] ~= 200 and http_stat["statcode"] ~= 404
+          and http_stat["statcode"] ~= 200 and http_stat["statcode"] ~= 404 and http_stat["statcode"] ~= 503 and http_stat["statcode"] ~= 502
           and not (http_stat["statcode"] >= 300 and http_stat["statcode"] <= 399)
           and not (http_stat["statcode"] == 403 and user_not_publicly_viewable)
           and not (http_stat["statcode"] == 207 and url["url"]:match("posts%.singlePost"))
           and not ((http_stat["statcode"] == 403 or http_stat["statcode"] == 500) and url["url"]:match("^https?://[a-z%-]+%.cohostcdn%.org/.*"))
           and not (http_stat["statcode"] == 422 and url["url"]:match("^https?://proxy%-staging%.cohostcdn%.org/.*"))
           and not (http_stat["statcode"] == 414 and (current_item_type == "tag" or current_item_type == "tagext" or current_item_type == "usertag") and #current_item_value > 8000)
-          and not (http_stat["statcode"] == 500 and (current_item_type == "tag" or current_item_type == "usertag") and current_item_value:match("%%"))
+          and not (http_stat["statcode"] == 500 and url["url"]:match("/tagged/.*%%"))
           and not (current_item_type == "url" and http_stat["statcode"] ~= 503 and http_stat["statcode"] ~= 429)
           then
     print_debug("Not WTW")
