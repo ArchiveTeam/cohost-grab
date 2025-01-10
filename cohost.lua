@@ -1180,7 +1180,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
   end
 
   -- Whitelist instead of blacklist status codes
-  if status_code ~= 200 and status_code ~= 404 and status_code ~= 503 and status_code ~= 502
+  if status_code ~= 200 and status_code ~= 404
     and not (url["url"]:match("^https?://cohost%.org/[^/%?]+$") and status_code == 404)
     and not (not url_is_essential and status_code == 404)
     and not (url["url"]:match("^https?://cdn%.iframe%.ly/") and status_code >= 400 and status_code <= 499) 
@@ -1296,7 +1296,7 @@ end
 wget.callbacks.write_to_warc = function(url, http_stat)
   set_new_item(url["url"])
   if (string.match(url["url"], "^https?://cohost%.org/") or string.match(url["url"], "^https?://[^%.]+%.cohost%.org/") or string.match(url["url"], "^https?://[^%.]+%.cohostcdn%.org/"))
-          and http_stat["statcode"] ~= 200 and http_stat["statcode"] ~= 404 and http_stat["statcode"] ~= 503 and http_stat["statcode"] ~= 502
+          and http_stat["statcode"] ~= 200 and http_stat["statcode"] ~= 404
           and not (http_stat["statcode"] >= 300 and http_stat["statcode"] <= 399)
           and not (http_stat["statcode"] == 403 and user_not_publicly_viewable)
           and not (http_stat["statcode"] == 207 and url["url"]:match("posts%.singlePost"))
