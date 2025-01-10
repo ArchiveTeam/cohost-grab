@@ -58,7 +58,7 @@ if not WGET_AT:
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = '20250110.02'
+VERSION = '20250110.03'
 USER_AGENT = 'Archiveteam (https://wiki.archiveteam.org/; communicate at https://webirc.hackint.org/#ircs://irc.hackint.org/#archiveteam)'
 TRACKER_ID = 'cohost'
 TRACKER_HOST = 'legacy-api.arpa.li'
@@ -222,6 +222,7 @@ class WgetArgs(object):
             '--warc-dedup-url-agnostic'
         ]
         
+        print("Recv name", b64encode(item['item_name'].encode("utf-8")))
         item_names = item['item_name'].split('\0')
         assert len(item_names) <= MULTI_ITEM_SIZE, "Basic check, got " + b64encode(item['item_name'].encode("utf-8")).decode("utf-8")
         start_urls = []
@@ -307,6 +308,7 @@ class WgetArgs(object):
             print('*** Wget will bind address at {0} ***'.format(
                 globals()['bind_address']))
             print('')
+        print("args are", wget_args)
 
         return realize(wget_args, item)
 
