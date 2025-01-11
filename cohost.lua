@@ -111,7 +111,8 @@ end
 
 set_new_item = function(url)
   -- If next exists, and it matches the current
-  if start_urls[next_start_url_index] and (urlparse.unescape(url) == urlparse.unescape(start_urls[next_start_url_index])) then
+  if start_urls[next_start_url_index] and (urlparse.unescape(url) == urlparse.unescape(start_urls[next_start_url_index]))
+    or (#start_urls == 1 and current_item_value == nil and urlparse.parse(start_urls[next_start_url_index]).authority == urlparse.parse(url).authority) then
     end_of_item()
     current_item_type = items_table[next_start_url_index][1]
     current_item_value = items_table[next_start_url_index][2]
