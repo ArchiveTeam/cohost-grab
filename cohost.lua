@@ -457,7 +457,8 @@ local function check_post_attachments(post, check)
         aspect_ratio = largest_att["width"] / largest_att["height"]
         print_debug("Setting AR per", largest_att["width"], largest_att["height"])
       else
-        assert(size(largest_att) == 0 and largest_att["width"] == nil and largest_att["height"] == nil) -- True whether non-image or image without size
+        assert(size(largest_att) == 0 and (largest_att["width"] == nil and largest_att["height"] == nil)
+          or (largest_att["width"] == 0 and largest_att["height"] == 0)) -- True whether non-image or image without size (or erroring image - https://cohost.org/eviee/post/183101-wait-so-whats-the-ma)
         aspect_ratio = 16/9;
         print_debug("Defaulting AR per", JSON:encode(largest_att))
       end
@@ -1073,7 +1074,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
         discover_item("userfix2", current_user .. "+" .. tostring(page + 1))
       end
       
-      if (not current_item_value:match("%+")) and (not get_subdomain_resources) then
+      if (not current_item_value:match("%+")) and (not get_subdomain_resources) and #current_item_value <= 63 then
         assert(#resp_json["result"]["data"]["posts"] <= 3)
       end
       
@@ -1186,6 +1187,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
     and not (status_code == 0 and url["url"]:match("^https?://no%-reply%.cohost%.org/"))
     and not (current_item_type == "url" and not ((status_code == 503 or status_code == 429) and url_is_essential))
     and not (current_user == "www" or current_user == "static" or current_user == "SB2749")
+    and not current_item_type == "dummy"
     then
     print("Server returned " .. http_stat.statcode .. " (" .. err .. "). Sleeping.\n")
     do_retry = true
@@ -1296,7 +1298,8 @@ wget.callbacks.write_to_warc = function(url, http_stat)
           and not (http_stat["statcode"] == 414 and (current_item_type == "tag" or current_item_type == "tagext" or current_item_type == "usertag") and #current_item_value > 8000)
           and not (http_stat["statcode"] == 500 and url["url"]:match("/tagged/.*%%"))
           and not (current_item_type == "url" and http_stat["statcode"] ~= 503 and http_stat["statcode"] ~= 429)
-          and not (current_user == "www" or current_user == "static" or current_user == "SB2749")
+          and not (current_user == "www" or current_user == "static" or current_user == "SB2749" or current_user == "api")
+          and not current_item_type == "dummy"
           then
     print_debug("Not WTW")
     return false

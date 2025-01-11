@@ -234,9 +234,13 @@ class WgetArgs(object):
 
         item_names_to_submit = item_names.copy()
         for item_name in item_names:
+            item_name = item_name.replace("\n", "")
             wget_args.extend(['--warc-header', 'x-wget-at-project-item-name: '+item_name])
             wget_args.append('item-name://' + item_name)
-            item_type, item_value = item_name.split(':', 1)
+            if ":" in item_name:
+                item_type, item_value = item_name.split(':', 1)
+            else:
+                item_type, item_value = "dummy", item_name
             if item_type == 'user':
                 if not re.match(r"^[0-9a-zA-Z\-]+(\+\d+)?$", item_value):
                     print("Skipping invalid item", item_value)
@@ -286,6 +290,11 @@ class WgetArgs(object):
                 wget_args.extend(['--warc-header', 'cohost-url: ' + item_name])
                 wget_args.append(item_name)
                 set_start_url("url", item_name, item_name)
+            elif item_type == "dummy":
+                wget_args.extend(['--warc-header', 'cohost-user-dummy: ' + item_value])
+                url = 'https://cohost.org/'
+                wget_args.append(url)
+                set_start_url(item_type, item_value, url)
             elif item_type == "post":
                 # This item type is only used for testing; does not get everything to play back a post but causes a substantial portion of the logic to run
                 wget_args.extend(['--warc-header', 'cohost-post: ' + item_value])
