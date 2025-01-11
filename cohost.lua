@@ -1161,7 +1161,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
   
   
   do_retry = false
-  local maxtries = 8
+  local maxtries = 0
   local url_is_essential = true
   if not (url["url"]:match("^https?://cohost%.org/") or url["url"]:match("^https?://[^%.]+%.cohost%.org/") or url["url"]:match("^https?://[^%.]+%.cohostcdn%.org/")) then
     maxtries = 3
